@@ -1,0 +1,59 @@
+
+
+// const MyApp = () => {
+//   const [enhancedImageUrl, setEnhancedImageUrl] = useState(null);
+
+//   const replicateEnhancement = async (imageFile) => {
+//     const replicate = new Replicate({
+//       auth: "r8_InjcaVB1gBMY51XQdgXzPMHJRiaMxJF1bR2X5", // Replace with your Replicate API token
+//     });
+
+//     try {
+//       const output = await replicate.run("batouresearch/high-resolution-controlnet-tile:latest", {
+//         input: {
+//           hdr: 0.7,
+//           image: imageFile.fileUrl,
+//           // Add other enhancement parameters as needed
+//         },
+//       });
+
+//       // Assuming the Replicate API returns an enhanced image URL
+//       setEnhancedImageUrl(output.enhancedImage);
+
+//       // Log information to the console
+//       console.log("Image File:", imageFile);
+//       console.log("Enhanced Image URL:", enhancedImageUrl);
+//     } catch (error) {
+//       console.error("Error enhancing image:", error);
+//     }
+//   };
+
+//   const handleUpdate = (files) => {
+//     // Handle uploaded files, and initiate the enhancement process
+//     replicateEnhancement(files[0]);
+//   };
+
+//   return (
+//     <div>
+//       <UploadDropzone
+//         uploader={Uploader({
+//           apiKey: "public_12a1yp3ERjKdgM87egzFDbfwrNE1", // Replace with your Bytescale API key
+//         })}
+//         options={{ multi: false }}
+//         onUpdate={handleUpdate}
+//         width="600px"
+//         height="375px"
+//       />
+
+//       {enhancedImageUrl && (
+//         <div>
+//           <p>Enhanced Image:</p>
+//           <img src={enhancedImageUrl} alt="Enhanced" />
+//           <img src={enhancedImageUrl} alt="Enhanced" />
+//         </div>
+//       )}
+//     </div>
+//   );
+// };
+
+
