@@ -19,6 +19,11 @@ const NavBarLanding = () => {
           </div>
           {isLoggedIn ? (
                <div className="flex">
+                     <li className="mr-4">
+                 <CustomLink to="/familytree" className="text-white">
+                   Family Tree
+                 </CustomLink>
+               </li>
                <li className="mr-4">
                  <CustomLink to="/photos" className="text-white">
                    Photos
@@ -29,16 +34,16 @@ const NavBarLanding = () => {
                    Restoration
                  </CustomLink>
                </li>
-               <li>
+               <li  className="mr-4">
                  <CustomLink to="/profile" className="text-white">
                    Profile
                  </CustomLink>
                </li>
-               <li onClick={logout}>
+               {/* <li  className="mr-4" onClick={logout}>
                  <CustomLink to="/profile" className="text-white">
-                   Profile
+                   Logout
                  </CustomLink>
-               </li>
+               </li> */}
              </div>
              ) : (
           <div className="flex">

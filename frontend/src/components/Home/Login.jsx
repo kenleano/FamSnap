@@ -26,9 +26,8 @@ const Login = () => {
       // Inside your handleSubmit function after successful login
       const userData = await response.json();
       console.log("Logging in user:", userData);
-      navigate("/profile");
       login(userData); // Pass userData to login
-      navigate("/profile");
+      navigate("/familytree");
       console.log("Logging in user:", userData);
       console.log("Navigation called");
     } catch (error) {

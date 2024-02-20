@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 
 const Register = () => {
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [birthday, setBirthday] = useState('');
@@ -10,6 +12,8 @@ const Register = () => {
 
     // Constructing the payload
     const payload = {
+      firstName,
+      lastName,
       email,
       password,
       birthday,
@@ -43,6 +47,26 @@ const Register = () => {
     <div>
       <h1>Register</h1>
       <form onSubmit={handleSubmit}>
+      <div>
+          <label htmlFor="firstName">First Name:</label>
+          <input
+            type="firstName"
+            id="firstName"
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+            required
+          />
+        </div>
+        <div>
+          <label htmlFor="lastName">Last Name:</label>
+          <input
+            type="lastName"
+            id="lastName"
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
+            required
+          />
+        </div>
         <div>
           <label htmlFor="email">Email:</label>
           <input

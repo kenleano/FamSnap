@@ -18,7 +18,7 @@ const Profile = () => {
     <nav>
       {user ? (
         <div>
-          <span>Welcome, {user.email}!</span>
+          <span>Welcome, {user.firstName}!</span>
           <button onClick={logout}>Logout</button>
         </div>
       ) : (

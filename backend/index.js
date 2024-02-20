@@ -34,9 +34,7 @@ app.use((req, res, next) => {
 });
 
 // Connect to MongoDB
-mongoose
-  .connect(mongoDBURL, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log("MongoDB connected successfully"))
+mongoose.connect(mongoDBURL).then(() => console.log("MongoDB connected successfully"))
   .catch((err) => console.error("MongoDB connection error:", err));
 
 // Basic route for testing
@@ -55,13 +53,22 @@ app.post("/login", async (req, res) => {
   if (!user) {
     return res.status(400).send("User not found");
   }
-
   // Check if the password is correct
   const validPassword = await bcrypt.compare(req.body.password, user.password);
   if (!validPassword) {
     return res.status(400).send("Invalid password");
   }
-  res.status(200).send({ message: "Login successful", user: { email: user.email, id: user._id } }); // Optionally send back user details
+    res.status(200).send({
+    message: "Login successful",
+    user: {
+      firstName: user.firstName, // Assuming these fields exist on your user model
+      lastName: user.lastName,
+      email: user.email,
+      birthday: user.birthday,
+      id: user._id,
+   
+    }
+  });
 });
 
 
@@ -85,6 +92,8 @@ app.post("/register", async (req, res) => {
     // Hash the password before saving
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
     const user = new User({
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
       email: req.body.email,
       password: hashedPassword,
       birthday: req.body.birthday // Ensure your User model supports a 'birthday' field
