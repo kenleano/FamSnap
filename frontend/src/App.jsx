@@ -5,7 +5,7 @@ import NavBar from "./components/NavBar";
 import { Route, Routes } from "react-router-dom";
 import Home from "./components/Home/Home";
 import FamilyTree from "./components/FamilyTree/FamilyTree";
-import Photos from "./components/Photos";
+import Photos from "./components/Photos/Photos";
 import Restoration from "./components/Restoration";
 import Profile from "./components/Profile";
 import Login from "./components/Home/Login";

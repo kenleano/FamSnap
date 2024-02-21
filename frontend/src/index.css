@@ -9,6 +9,7 @@ img {
 }
 
 .images-grid {
+    outline: 1px solid red;;
     display:grid;
     gap:0.5rem;
     grid-template-columns: repeat(auto-fill,minmax(450px, 1fr));

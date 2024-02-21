@@ -1,9 +1,9 @@
 import React from "react";
 // import images from "./api-mock.json";
 import { useState, useEffect } from "react";
-import { getImages, searchImages, uploadImage } from "./api";
+import { getImages, searchImages, uploadImage } from "../api";
 
-const Photos = () => {
+const AllPhotos = () => {
   // console.log("images", images);
   const [imageList, setImageList] = useState([]);
   const [nextCursor, setNextCursor] = useState(null);
@@ -70,9 +70,10 @@ const Photos = () => {
           Clear
         </button>
       </form>
-      <div className="image-grid">
+      <div className="grid gap-2 grid-cols-[repeat(auto-fill,minmax(250px,1fr))]">
         {imageList.map((image) => (
           <img
+            className="w-full h-full object-cover"
             key={image.public_id}
             src={image.url}
             alt={image.public_id}
@@ -88,4 +89,4 @@ const Photos = () => {
   );
 };
 
-export default Photos;
+export default AllPhotos;
