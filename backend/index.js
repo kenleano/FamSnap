@@ -133,27 +133,98 @@ app.post("/login", async (req, res) => {
   });
 });
 //Register
+
 app.post("/register", async (req, res) => {
+  const { child, mother, father } = req.body;
+
   try {
-    // Hash the password before saving
-    const hashedPassword = await bcrypt.hash(req.body.password, 10);
-    const user = new User({
-      firstName: req.body.firstName,
-      lastName: req.body.lastName,
-      email: req.body.email,
-      password: hashedPassword,
-      birthday: req.body.birthday, // Ensure your User model supports a 'birthday' field
+    // Function to create a user
+    const createUser = async (userData, familyId = null, isChild = false) => {
+      const { email, password, ...rest } = userData;
+      let hashedPassword = undefined;
+
+      if (isChild && password) {
+        hashedPassword = await bcrypt.hash(password, 10);
+      }
+
+      const user = new User({
+        ...rest,
+        email: isChild ? email : undefined,
+        password: hashedPassword,
+        // Set familyId for each member, if provided
+        ...(familyId && { familyId }),
+      });
+
+      await user.save();
+      return user;
+    };
+
+    // Step 1: Create the child record first but without setting familyId yet
+    const childRecord = await createUser(child, null, true);
+
+    // Use the child's ID as the familyId for all family members, including the child itself
+    const familyId = childRecord._id;
+
+    // Step 2: Create mother and father records with the child's ID as their familyId
+    const motherRecord = await createUser(mother, familyId);
+    const fatherRecord = await createUser(father, familyId);
+
+    // Step 3: Link mother and father as partners
+    await User.findByIdAndUpdate(motherRecord._id, {
+      $set: { pid: fatherRecord._id, familyId: familyId },
+    });
+    // Step 4: Update the child record to set its familyId to its own _id
+    //Update the record to have motherID and fatherID as mid and fid
+    await User.findByIdAndUpdate(fatherRecord._id, {
+      $set: { pid: motherRecord._id, familyId: familyId },
+    });
+    await User.findByIdAndUpdate(childRecord._id, {
+      $set: {
+        mid: motherRecord._id,
+        fid: fatherRecord._id,
+        familyId: familyId,
+      },
     });
 
-    const result = await user.save();
-    res
-      .status(201)
-      .send({ message: "User created successfully", userId: result._id });
+    // Respond with success and the IDs of the created records
+    res.status(201).send({
+      message: "Family registered successfully",
+      ids: {
+        childId: childRecord._id.toString(),
+        motherId: motherRecord._id.toString(),
+        fatherId: fatherRecord._id.toString(),
+        familyId: familyId.toString(), // Send familyId as string for convenience
+      },
+    });
   } catch (err) {
     console.error(err);
-    res.status(500).send("Error registering new user");
+    res
+      .status(500)
+      .send({ message: "Error registering family", error: err.message });
   }
 });
+
+// app.post("/register", async (req, res) => {
+//   try {
+//     // Hash the password before saving
+//     const hashedPassword = await bcrypt.hash(req.body.password, 10);
+//     const user = new User({
+//       firstName: req.body.firstName,
+//       lastName: req.body.lastName,
+//       email: req.body.email,
+//       password: hashedPassword,
+//       birthday: req.body.birthday, // Ensure your User model supports a 'birthday' field
+//     });
+
+//     const result = await user.save();
+//     res
+//       .status(201)
+//       .send({ message: "User created successfully", userId: result._id });
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).send("Error registering new user");
+//   }
+// });
 
 //FAMILY MEMBERS CRUD
 
@@ -174,15 +245,14 @@ app.post("/familymembers", async (req, res) => {
 // Get all family members
 app.get("/users/:userId/familymembers", async (req, res) => {
   try {
-    const familyMembers = await FamilyMember.find({
-      _familyId: req.params.userId,
+    const user = await User.find({
+      familyId: req.params.userId,
     });
-    res.status(200).send(familyMembers);
+    res.status(200).send(user);
   } catch (error) {
     res.status(500).send(error);
   }
 });
-
 
 // Get a single family member by id
 app.get("/familymembers/:id", async (req, res) => {

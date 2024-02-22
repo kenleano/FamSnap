@@ -1,9 +1,15 @@
 import React from "react";
 import { useAuth } from "../AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const SideProfile = () => {
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
 
+  const handleLogout = () => {
+    logout();
+    navigate("/login"); // Navigate to the login page after logout
+  };
   return (
     <div>
       {user ? (
@@ -27,7 +33,7 @@ const SideProfile = () => {
           <br />
           <button>Biography</button>
           <br />
-          <button onClick={logout}>Logout</button>
+          <button onClick={handleLogout}>Logout</button>
         </div>
       ) : (
         <p>Please log in.</p>

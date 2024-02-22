@@ -1,103 +1,192 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+// import { useAuth } from "../AuthContext"; // Adjust the path as needed
 
 const Register = () => {
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [birthday, setBirthday] = useState('');
+  // const { login } = useAuth();
+  const navigate = useNavigate();
+  // State for the child, mother, and father details
+  const [childDetails, setChildDetails] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    birthday: "",
+  });
+  const [motherDetails, setMotherDetails] = useState({
+    firstName: "",
+    lastName: "",
+    birthday: "",
+  });
+  const [fatherDetails, setFatherDetails] = useState({
+    firstName: "",
+    lastName: "",
+    birthday: "",
+  });
 
+  // Handler for input changes for child, mother, and father
+  const handleChange = (e, setDetails) => {
+    const { name, value } = e.target;
+    setDetails((prevDetails) => ({ ...prevDetails, [name]: value }));
+  };
+
+  // Handler for form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Constructing the payload
     const payload = {
-      firstName,
-      lastName,
-      email,
-      password,
-      birthday,
+      child: childDetails,
+      mother: motherDetails,
+      father: fatherDetails,
     };
 
     try {
-      // Sending the user input to the server using fetch
-      const response = await fetch('http://localhost:3000/register', {
-        method: 'POST',
+      const response = await fetch("http://localhost:3000/register", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(payload),
       });
 
       if (!response.ok) {
-        // If server responds with a non-OK (200) status, throw an error
         throw new Error(`Failed to register: ${response.status}`);
       }
 
-      const data = await response.json(); // Assuming the server sends back some data
-      console.log('Registration successful:', data);
-      // Here, you can redirect the user or show a success message
+      const data = await response.json();
+      console.log("Registration successful:", data);
+      // login(data.user);
+      // Redirect or show success message
+      navigate("/login");
     } catch (error) {
-      console.error('Registration error:', error);
-      // Handle registration errors (e.g., display an error message)
+      console.error("Registration error:", error);
+      // Show error message
     }
   };
 
   return (
-    <div>
-      <h1>Register</h1>
-      <form onSubmit={handleSubmit}>
-      <div>
-          <label htmlFor="firstName">First Name:</label>
-          <input
-            type="firstName"
-            id="firstName"
-            value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
-            required
-          />
-        </div>
+    <div className="max-w-md mx-auto mt-10 space-y-4">
+      <h1 className="text-lg font-semibold text-center">Family Registration</h1>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Child Details */}
         <div>
-          <label htmlFor="lastName">Last Name:</label>
-          <input
-            type="lastName"
-            id="lastName"
-            value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
-            required
-          />
+          <h2 className="font-medium">Child Details</h2>
+          <div className="space-y-2">
+            <input
+              type="text"
+              name="firstName"
+              placeholder="First Name"
+              value={childDetails.firstName}
+              onChange={(e) => handleChange(e, setChildDetails)}
+              className="input"
+              required
+            />
+            <input
+              type="text"
+              name="lastName"
+              placeholder="Last Name"
+              value={childDetails.lastName}
+              onChange={(e) => handleChange(e, setChildDetails)}
+              className="input"
+              required
+            />
+            <input
+              type="email"
+              name="email"
+              placeholder="Email"
+              value={childDetails.email}
+              onChange={(e) => handleChange(e, setChildDetails)}
+              className="input"
+            />
+            <input
+              type="password"
+              name="password"
+              placeholder="Password"
+              value={childDetails.password}
+              onChange={(e) => handleChange(e, setChildDetails)}
+              className="input"
+            />
+            <input
+              type="date"
+              name="birthday"
+              placeholder="Birthday"
+              value={childDetails.birthday}
+              onChange={(e) => handleChange(e, setChildDetails)}
+              className="input"
+            />
+          </div>
         </div>
+        {/* Mother Details */}
         <div>
-          <label htmlFor="email">Email:</label>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
+          <h2 className="font-medium">Mother Details</h2>
+          <div className="space-y-2">
+            <input
+              type="text"
+              name="firstName"
+              placeholder="First Name"
+              value={motherDetails.firstName}
+              onChange={(e) => handleChange(e, setMotherDetails)}
+              className="input"
+              required
+            />
+            <input
+              type="text"
+              name="lastName"
+              placeholder="Last Name"
+              value={motherDetails.lastName}
+              onChange={(e) => handleChange(e, setMotherDetails)}
+              className="input"
+              required
+            />
+            <input
+              type="date"
+              name="birthday"
+              placeholder="Birthday"
+              value={motherDetails.birthday}
+              onChange={(e) => handleChange(e, setMotherDetails)}
+              className="input"
+            />
+          </div>
         </div>
+        {/* Father Details */}
         <div>
-          <label htmlFor="password">Password:</label>
-          <input
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
+          <h2 className="font-medium">Father Details</h2>
+          <div className="space-y-2">
+            <input
+              type="text"
+              name="firstName"
+              placeholder="First Name"
+              value={fatherDetails.firstName}
+              onChange={(e) => handleChange(e, setFatherDetails)}
+              className="input"
+              required
+            />
+            <input
+              type="text"
+              name="lastName"
+              placeholder="Last Name"
+              value={fatherDetails.lastName}
+              onChange={(e) => handleChange(e, setFatherDetails)}
+              className="input"
+              required
+            />
+            <input
+              type="date"
+              name="birthday"
+              placeholder="Birthday"
+              value={fatherDetails.birthday}
+              onChange={(e) => handleChange(e, setFatherDetails)}
+              className="input"
+            />
+          </div>
         </div>
-        <div>
-          <label htmlFor="birthday">Birthday:</label>
-          <input
-            type="date"
-            id="birthday"
-            value={birthday}
-            onChange={(e) => setBirthday(e.target.value)}
-            required
-          />
-        </div>
-        <button type="submit">Register</button>
+        {/* Submit Button */}
+        <button
+          type="submit"
+          className="w-full p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+        >
+          Register Family
+        </button>
       </form>
     </div>
   );

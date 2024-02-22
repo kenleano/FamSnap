@@ -2,6 +2,7 @@ import React from "react";
 import SideProfile from "./SideProfile";
 import { useAuth } from "../AuthContext";
 import Tree from "./Tree";
+import TreeTrial from "./TreeTrial1";
 
 const FamilyTree = () => {
   const { user } = useAuth();
