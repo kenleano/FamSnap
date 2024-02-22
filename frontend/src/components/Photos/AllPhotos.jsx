@@ -2,6 +2,7 @@ import React from "react";
 // import images from "./api-mock.json";
 import { useState, useEffect } from "react";
 import { getImages, searchImages, uploadImage } from "../api";
+import UploadWidget from "./UploadWidget";
 
 const AllPhotos = () => {
   // console.log("images", images);
@@ -43,21 +44,35 @@ const AllPhotos = () => {
     setSearchValue("");
   };
 
-  const handleImageUpload = async (event) => {
-    event.preventDefault();
-    const file = event.target.files[0]; // Get the file from the input
-    if (!file) {
-      alert("Please select a file first!");
-      return;
-    }
-    await uploadImage(file);
-  };
+ const handleImageUpload = async (event) => {
+   event.preventDefault();
+   const file = event.target.files[0];
+   if (!file) {
+     alert("Please select a file first!");
+     return;
+   }
+   const formData = new FormData();
+   formData.append("image", file);
+
+   try {
+     // Adjust the endpoint URL as necessary
+     const response = await fetch("/upload", {
+       method: "POST",
+       body: formData,
+     });
+     const data = await response.json();
+     console.log(data); // Process success response
+   } catch (error) {
+     console.error("Upload failed:", error);
+   }
+ };
 
   return (
-    <>
-      <form>
+      <>
+          <UploadWidget/>
+      {/* <form>
         <input type="file" onChange={handleImageUpload} />
-      </form>
+      </form> */}
       <form onSubmit={handleFormSubmit}>
         <input
           value={searchValue}

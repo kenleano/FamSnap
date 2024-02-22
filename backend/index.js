@@ -3,13 +3,14 @@ import mongoose from "mongoose";
 import fetch from "node-fetch";
 import bodyParser from "body-parser";
 import User from "./models/user.js";
+import FamilyMember from "./models/familyMember.js";
 import bcrypt from "bcrypt";
 import cors from "cors";
 import dotenv from "dotenv";
 import axios from "axios";
 import multer from "multer";
-const upload = multer({ dest: "uploads/" });
-import fs from 'fs';
+
+import fs from "fs";
 // const { json } = require('body-parser');
 const { parsed: config } = dotenv.config();
 
@@ -62,12 +63,23 @@ app.get("/search", async (req, res) => {
 });
 
 //UPLOAD:
+// const multer = require("multer");
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "uploads/"); // Make sure this directory exists
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.fieldname + "-" + Date.now());
+  },
+});
+
+const upload = multer({ storage: storage });
 
 app.post("/upload", upload.single("image"), async (req, res) => {
+  console.log(req.file); // Check if the file is received
   if (!req.file) {
     return res.status(400).send("No file uploaded.");
   }
-
   try {
     const filePath = req.file.path;
     const cloudinaryResponse = await uploadToCloudinary(filePath);
@@ -140,5 +152,77 @@ app.post("/register", async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).send("Error registering new user");
+  }
+});
+
+//FAMILY MEMBERS CRUD
+
+// Create a new family member
+app.post("/familymembers", async (req, res) => {
+  try {
+    const familyMember = new FamilyMember({
+      ...req.body,
+      _familyId: req.body._familyId, // Ensure this ID is passed in the request
+    });
+    await familyMember.save();
+    res.status(201).send(familyMember);
+  } catch (error) {
+    res.status(400).send(error);
+  }
+});
+
+// Get all family members
+app.get("/users/:userId/familymembers", async (req, res) => {
+  try {
+    const familyMembers = await FamilyMember.find({
+      _familyId: req.params.userId,
+    });
+    res.status(200).send(familyMembers);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+
+
+// Get a single family member by id
+app.get("/familymembers/:id", async (req, res) => {
+  try {
+    const familyMember = await FamilyMember.findById(req.params.id);
+    if (!familyMember) {
+      return res.status(404).send();
+    }
+    res.status(200).send(familyMember);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+
+// Update a family member by id
+app.patch("/familymembers/:id", async (req, res) => {
+  try {
+    const familyMember = await FamilyMember.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true, runValidators: true }
+    );
+    if (!familyMember) {
+      return res.status(404).send();
+    }
+    res.status(200).send(familyMember);
+  } catch (error) {
+    res.status(400).send(error);
+  }
+});
+
+// Delete a family member
+app.delete("/familymembers/:id", async (req, res) => {
+  try {
+    const familyMember = await FamilyMember.findByIdAndDelete(req.params.id);
+    if (!familyMember) {
+      return res.status(404).send();
+    }
+    res.status(200).send(familyMember);
+  } catch (error) {
+    res.status(500).send(error);
   }
 });
