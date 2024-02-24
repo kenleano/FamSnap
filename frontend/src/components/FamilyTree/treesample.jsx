@@ -1,90 +1,37 @@
-import React from "react";
-import "./Tree.css";
-import image1 from "./images/1.jpg";
-import image2 from "./images/2.jpg";
-import image3 from "./images/3.jpg";
-// Import other images similarly
+import React, { useRef, useEffect } from "react";
+// Assuming FamilyTree is a JavaScript library you've imported or included in your project
+// import FamilyTree from 'path-to-family-tree-library';
 
-const ComponentName = () => {
+const FamilyTreeComponent = () => {
+  const treeRef = useRef(null); // Create a ref to target the DOM element
+
+  useEffect(() => {
+    // Ensure the DOM element is available
+    if (treeRef.current) {
+      // Initialize the FamilyTree with the DOM element and configuration
+      new window.FamilyTree(treeRef.current, {
+        mouseScrool: window.FamilyTree.action.none,
+        enableSearch: false,
+        nodeTreeMenu: true,
+        nodeBinding: {
+          field_0: "name",
+        },
+        nodes: [
+          { id: 1, pids: [2], name: "Amber McKenzie", gender: "female" },
+          { id: 2, pids: [1], name: "Ava Field", gender: "male" },
+          { id: 3, mid: 1, fid: 2, name: "Peter Stevens", gender: "male" },
+          { id: 4, mid: 1, fid: 2, name: "Savin Stevens", gender: "male" },
+          { id: 5, mid: 1, fid: 2, name: "Emma Stevens", gender: "female" },
+        ],
+      });
+    }
+  }, []); // Empty dependency array ensures this runs once on mount
+
   return (
-    <div>
-      <div className="container">
-        <div className="row">
-          <div className="tree">
-            <ul>
-              <li>
-                {" "}
-                <a href="#">
-                  <img src={image1} />
-                  <span>Child</span>
-                </a>
-                <ul>
-                  <li>
-                    <a href="#">
-                      <img src={image2} />
-                      <span>Grand Child</span>
-                    </a>
-                    <ul>
-                      <li>
-                        {" "}
-                        <a href="#">
-                          <img src="images/3.jpg" />
-                          <span>Great Grand Child</span>
-                        </a>{" "}
-                      </li>
-                      <li>
-                        {" "}
-                        <a href="#">
-                          <img src="images/4.jpg" />
-                          <span>Great Grand Child</span>
-                        </a>{" "}
-                      </li>
-                    </ul>
-                  </li>
-                  <li>
-                    {" "}
-                    <a href="#">
-                      <img src="images/5.jpg" />
-                      <span>Grand Child</span>
-                    </a>
-                    <ul>
-                      <li>
-                        {" "}
-                        <a href="#">
-                          <img src="images/6.jpg" />
-                          <span>Great Grand Child</span>
-                        </a>{" "}
-                      </li>
-                      <li>
-                        {" "}
-                        <a href="#">
-                          <img src="images/7.jpg" />
-                          <span>Great Grand Child</span>
-                        </a>{" "}
-                      </li>
-                      <li>
-                        {" "}
-                        <a href="#">
-                          <img src="images/8.jpg" />
-                          <span>Great Grand Child</span>
-                        </a>{" "}
-                      </li>
-                    </ul>
-                  </li>
-                  <li>
-                    <a href="#">
-                      <img src="images/9.jpg" />
-                      <span>Grand Child</span>
-                    </a>
-                  </li>
-                </ul>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
+    <div ref={treeRef} id="tree" style={{ width: "100%", height: "100%" }}>
+      {/* Family tree will be attached here */}
     </div>
   );
 };
 
-export default ComponentName;
+export default FamilyTreeComponent;

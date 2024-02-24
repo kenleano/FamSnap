@@ -9,7 +9,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import axios from "axios";
 import multer from "multer";
-
+import Replicate from "replicate";
 import fs from "fs";
 // const { json } = require('body-parser');
 const { parsed: config } = dotenv.config();
@@ -40,6 +40,59 @@ const auth = {
   username: process.env.API_KEY,
   password: process.env.API_SECRET,
 };
+
+app.post("/restoreImage", async (req, res) => {
+  const imageInput = req.body; // Assuming you send the necessary input as JSON from the frontend
+
+  const response = await fetch("https://api.replicate.com/v1/predictions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Token ${process.env.REPLICATE_API_TOKEN}`,
+    },
+    body: JSON.stringify({
+      version:
+        "4af11083a13ebb9bf97a88d7906ef21cf79d1f2e5fa9d87b70739ce6b8113d29",
+      input: imageInput,
+    }),
+  });
+
+  const data = await response.json();
+  res.json(data); // Sending the response back to the frontend
+});
+
+app.get("/fetchImage/:imageId", async (req, res) => {
+  const { imageId } = req.params;
+  const imageUrl = `https://api.replicate.com/v1/predictions/${imageId}`;
+  const imageResponse = await fetch(imageUrl, {
+    headers: {
+      Authorization: `Token ${process.env.REPLICATE_API_TOKEN}`,
+    },
+  });
+  const imageData = await imageResponse.blob();
+  res.type(imageResponse.headers.get("content-type"));
+  res.send(imageData);
+});
+
+app.get("/checkStatus/:predictionId", async (req, res) => {
+  const { predictionId } = req.params;
+  const statusUrl = `https://api.replicate.com/v1/predictions/${predictionId}`;
+  try {
+    const statusResponse = await fetch(statusUrl, {
+      headers: {
+        Authorization: `Token ${process.env.REPLICATE_API_TOKEN}`,
+      },
+    });
+    const statusData = await statusResponse.json();
+
+    // Optionally filter the response here if you want to limit what gets sent to the frontend
+    res.json(statusData);
+  } catch (error) {
+    console.error("Failed to fetch prediction status:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 
 app.get("/photos", async (req, res) => {
   const response = await axios.get(BASE_URL + "/resources/image", {
@@ -229,16 +282,40 @@ app.post("/register", async (req, res) => {
 //FAMILY MEMBERS CRUD
 
 // Create a new family member
-app.post("/familymembers", async (req, res) => {
+app.post("/addfamily", async (req, res) => {
+  const {
+    firstName,
+    lastName,
+    email,
+    password,
+    birthday,
+    familyId,
+    mid,
+    fid,
+    pid,
+  } = req.body;
+
   try {
-    const familyMember = new FamilyMember({
-      ...req.body,
-      _familyId: req.body._familyId, // Ensure this ID is passed in the request
+    // Optional: Hash the password if provided
+    const newUser = new User({
+      firstName,
+      lastName,
+      email, // Ensure you handle unique constraint for email properly
+      birthday,
+      familyId, // Assuming this is provided or determined in some way
+      mid,
+      fid,
+      pid,
     });
-    await familyMember.save();
-    res.status(201).send(familyMember);
+    await newUser.save(); // Save the new user document to the database
+    res
+      .status(201)
+      .send({ message: "User added successfully", userId: newUser._id });
   } catch (error) {
-    res.status(400).send(error);
+    console.error("Error adding user:", error);
+    res
+      .status(500)
+      .send({ message: "Error adding user", error: error.message });
   }
 });
 
@@ -287,11 +364,11 @@ app.patch("/familymembers/:id", async (req, res) => {
 // Delete a family member
 app.delete("/familymembers/:id", async (req, res) => {
   try {
-    const familyMember = await FamilyMember.findByIdAndDelete(req.params.id);
-    if (!familyMember) {
+    const user = await User.findByIdAndDelete(req.params.id);
+    if (!user) {
       return res.status(404).send();
     }
-    res.status(200).send(familyMember);
+    res.status(200).send(user);
   } catch (error) {
     res.status(500).send(error);
   }

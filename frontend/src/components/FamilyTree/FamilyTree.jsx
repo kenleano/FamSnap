@@ -1,8 +1,8 @@
 import React from "react";
-import SideProfile from "./SideProfile";
+// import SideProfile from "./SideProfile";
 import { useAuth } from "../AuthContext";
 import Tree from "./Tree";
-import TreeTrial from "./TreeTrial1";
+// import TreeTrial from "./treesample";
 
 const FamilyTree = () => {
   const { user } = useAuth();
@@ -12,13 +12,12 @@ const FamilyTree = () => {
         <h2>{user.lastName} Family Tree</h2>
       </div>
       <div className="flex flex-col items-center">
+        <Tree />
         <div className="flex flex-row w-full justify-center">
           <div className="w-1/4 outline-gray-300 outline h-screen">
-            <SideProfile />
+            {/* <SideProfile /> */}
           </div>
-          <div className=" h-screen w-screen">
-            <Tree />
-          </div>
+          <div className=" h-screen w-screen"></div>
         </div>
       </div>
     </div>

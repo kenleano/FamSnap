@@ -33,8 +33,10 @@ const TreeComponent = () => {
 
   useEffect(() => {
     // Ensure the FamilyTree library is loaded
-    if (window.FamilyTree) {
+
+    if (treeRef.current) {
       // Initialize the family tree
+
       const nodes = familyMembers.map((member) => {
         const node = {
           id: member._id, // Use _id as the node id
@@ -50,8 +52,28 @@ const TreeComponent = () => {
 
         return node;
       });
-
       new window.FamilyTree(treeRef.current, {
+        mouseScrool: window.FamilyTree.action.none, // Disable mouse scroll actions
+        enableSearch: false, // Disable the search functionality
+        nodeTreeMenu: true, // Enable the tree menu for nodes
+        nodeMouseClick: window.FamilyTree.action.edit,
+        nodeMenu: {
+          details: { text: "Details" },
+          edit: { text: "Edit" },
+          add: { text: "Add" },
+          remove: { text: "Remove" },
+        },
+        nodeBinding: {
+          field_0: "name",
+          field_1: "gender",
+          field_2: "birthYear",
+        },
+        nodes: nodes,
+      });
+      console.log(nodes);
+      // HandleDelete
+
+      window.FamilyTree(treeRef.current, {
         nodeBinding: {
           field_0: "name",
           field_1: "gender",
@@ -63,8 +85,38 @@ const TreeComponent = () => {
     } else {
       console.error("FamilyTree library is not loaded.");
     }
-  }, [familyMembers]); // Re-render the tree whenever familyMembers change
+  }, [familyMembers]);
 
+  const handleNodeDeletion = async (nodeId) => {
+    if (window.confirm("Are you sure you want to delete this family member?")) {
+      try {
+        // Call your API to delete the node from the database
+        const response = await fetch(
+          `http://localhost:3000/familymembers/${nodeId}`,
+          {
+            method: "DELETE",
+          }
+        );
+
+        if (!response.ok) throw new Error("Failed to delete the family member");
+
+        // If the backend deletion was successful, remove the node from the FamilyTree
+        if (window.FamilyTree && treeRef.current) {
+          const tree = new window.FamilyTree(treeRef.current, {});
+          tree.removeNode(
+            nodeId,
+            () => {
+              console.log("Node removed successfully from the visualization");
+              // Optionally, refresh your family members list here
+            },
+            true
+          ); // Assuming true for fireEvent to update the tree accordingly
+        }
+      } catch (error) {
+        console.error("Error deleting family member:", error);
+      }
+    }
+  };
   return (
     <>
       <div>
@@ -73,9 +125,13 @@ const TreeComponent = () => {
           {familyMembers.map((member) => (
             <li key={member._id}>
               {member.firstName} {member.lastName} {member.mid}
+              <button onClick={() => handleNodeDeletion(member._id)}>
+                Delete
+              </button>
             </li>
           ))}
         </ul>
+        <button id="addButton">Add Family Member</button>
       </div>
       <div ref={treeRef} style={{ width: "100%", height: "700px" }}></div>
     </>
