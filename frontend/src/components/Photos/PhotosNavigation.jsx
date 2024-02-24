@@ -3,22 +3,34 @@ import { Link, useMatch, useResolvedPath } from "react-router-dom";
 
 const PhotosNav = () => {
   return (
-    <div>
-      <div>
-        <CustomLink to="/photos" className="text-black">
-          <button>All Photos</button>
-        </CustomLink>
-        <br />
-        <CustomLink to="/photos/people" className="text-black">
-          <button>People</button>
-        </CustomLink>
-        <br />
-        <CustomLink to="/photos/albums" className="text-black">
-          <button>Albums</button>
-        </CustomLink>
-        <br />
-      </div>
-    </div>
+    <nav className="bg-blue-700">
+      <ul className="flex flex-col items-start p-4">
+        <li>
+          <CustomLink
+            to="/photos"
+            className="text-white py-2 px-4 hover:bg-blue-800 rounded transition duration-300 ease-in-out block mb-2"
+          >
+            All Photos
+          </CustomLink>
+        </li>
+        <li>
+          <CustomLink
+            to="/photos/people"
+            className="text-white py-2 px-4 hover:bg-blue-800 rounded transition duration-300 ease-in-out block mb-2"
+          >
+            People
+          </CustomLink>
+        </li>
+        <li>
+          <CustomLink
+            to="/photos/albums"
+            className="text-white py-2 px-4 hover:bg-blue-800 rounded transition duration-300 ease-in-out block mb-2"
+          >
+            Albums
+          </CustomLink>
+        </li>
+      </ul>
+    </nav>
   );
 };
 
