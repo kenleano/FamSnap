@@ -36,22 +36,32 @@ const Login = () => {
   };
 
   return (
-    <div>
-      <h1>Login</h1>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <button type="submit">Login</button>
+    <div className="max-w-xs mx-auto">
+      <h1 className="text-xl font-bold mb-4">Login</h1>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="flex flex-col">
+          <input
+            type="text"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="mt-1 p-2 border border-gray-300 rounded"
+          />
+        </div>
+        <div className="flex flex-col">
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="mt-1 p-2 border border-gray-300 rounded"
+          />
+        </div>
+        <button
+          type="submit"
+          className="w-full p-2 bg-blue-700 text-white rounded hover:bg-blue-800"
+        >Login
+        </button>
       </form>
     </div>
   );

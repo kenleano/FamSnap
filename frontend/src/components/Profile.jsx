@@ -1,31 +1,179 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from './AuthContext'; // Adjust the import path as needed
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { useAuth } from "./AuthContext"; // Keep this if you need to get userId
+import { useNavigate } from "react-router-dom";
 
-const Profile = () => {
+const ProfileEdit = () => {
   const { user, logout } = useAuth();
-  const navigate = useNavigate(); // Hook for navigation
+  console.log("user", user);
+  const navigate = useNavigate();
+  const [notification, setNotification] = useState({
+    message: "",
+    show: false,
+  });
 
-  // Redirect if not logged in
-  React.useEffect(() => {
-    if (!user) {
-      navigate("/");
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "", // Placeholder for new password, consider security
+    birthday: "",
+  });
+
+  useEffect(() => {
+    // Fetch user data if user.id is available
+    if (user && user.id) {
+      axios
+        .get(`http://localhost:3000/getUser/${user.id}`)
+        .then((response) => {
+          const { firstName, lastName, email, birthday } = response.data;
+          setFormData({
+            firstName: firstName || "",
+            lastName: lastName || "",
+            email: email || "",
+            password: "", // Do not prefill password
+            birthday: birthday ? birthday.split("T")[0] : "", // Adjust if your date format is different
+          });
+        })
+        .catch((error) =>
+          console.error("There was an error fetching the user data:", error)
+        );
+      console.log("user", formData);
     }
-  }, [user, navigate]); // Depend on 'user' to trigger redirection when it changes
+  }, [user]); // Depend on user to refetch if it changes
 
-  // Conditional rendering based on 'user' being present
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch(
+        `http://localhost:3000/updateUser/${user.id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            firstName: formData.firstName,
+            lastName: formData.lastName,
+            email: formData.email,
+            password: formData.password, // Make sure your backend handles password hashing
+            birthday: formData.birthday,
+          }),
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Failed to update profile");
+      }
+      setNotification({
+        message: "Profile updated successfully!",
+        show: true,
+      });
+      setTimeout(() => setNotification({ message: "", show: false }), 3000);
+      // Optionally, refresh user info in context or trigger a re-fetch
+      console.log("Profile updated successfully");
+      // Navigate to profile page or show a success message
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      // Show an error message to the user
+      // Update notification state for error
+      setNotification({ message: "Error updating profile.", show: true });
+      // Hide notification after 3 seconds
+      setTimeout(() => setNotification({ message: "", show: false }), 3000);
+    }
+  };
+  const handleLogout = () => {
+    logout();
+    navigate("/login"); // Navigate to the login page after logout
+  };
   return (
-    <nav>
-      {user ? (
-        <div>
-          <span>Welcome, {user.firstName}!</span>
-          <button onClick={logout}>Logout</button>
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <h3>Profile</h3>
+      {notification.show && (
+        <div
+          className={`alert ${
+            notification.message.startsWith("Error")
+              ? "bg-red-500"
+              : "bg-green-500"
+          } text-white p-3 rounded`}
+        >
+          {notification.message}
         </div>
-      ) : (
-        <div>Loading...</div> // This will not be shown due to the redirect, but it's good to handle the null state
       )}
-    </nav>
+      <div className="flex flex-col">
+        <label className="text-gray-700">First Name</label>
+        <input
+          type="text"
+          name="firstName"
+          value={formData.firstName}
+          onChange={handleChange}
+          className="mt-1 p-2 border border-gray-300 rounded"
+        />
+      </div>
+      <div className="flex flex-col">
+        <label className="text-gray-700">Last Name</label>
+        <input
+          type="text"
+          name="lastName"
+          value={formData.lastName}
+          onChange={handleChange}
+          className="mt-1 p-2 border border-gray-300 rounded"
+        />
+      </div>
+      <div className="flex flex-col">
+        <label className="text-gray-700">Email</label>
+        <input
+          type="email"
+          name="email"
+          value={formData.email}
+          onChange={handleChange}
+          className="mt-1 p-2 border border-gray-300 rounded"
+        />
+      </div>
+      <div className="flex flex-col">
+        <label className="text-gray-700">Password</label>
+        <input
+          type="password"
+          name="password"
+          value={formData.password}
+          onChange={handleChange}
+          placeholder="New Password"
+          className="mt-1 p-2 border border-gray-300 rounded"
+        />
+      </div>
+      <div className="flex flex-col">
+        <label className="text-gray-700">Birthday</label>
+        <input
+          type="date"
+          name="birthday"
+          value={formData.birthday}
+          onChange={handleChange}
+          className="mt-1 p-2 border border-gray-300 rounded"
+        />
+      </div>
+      <button
+        type="submit"
+        className="w-full p-2 bg-blue-700 text-white rounded hover:bg-blue-800"
+      >
+        Update Profile
+      </button>
+
+      <button
+        type="submit"
+        className="w-full p-2 bg-red-700 text-white rounded hover:bg-red-800"
+        onClick={handleLogout}
+      >
+        Logout
+      </button>
+    </form>
   );
 };
 
-export default Profile;
+export default ProfileEdit;

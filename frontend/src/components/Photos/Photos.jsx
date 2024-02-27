@@ -11,7 +11,7 @@ const Photos = () => {
   const { user } = useAuth();
   return (
     <>
-      <div className="flex justify-center w-screen py-10">
+      <div className="flex justify-center py-10">
         {user.lastName} Family Album
       </div>
       <div className="flex flex-col items-center">

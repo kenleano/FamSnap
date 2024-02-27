@@ -4,13 +4,14 @@ import { useAuth } from "../AuthContext";
 const TreeComponent = () => {
   const { user } = useAuth();
   const [familyMembers, setFamilyMembers] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+
+  const [selectedMemberForDeletion, setSelectedMemberForDeletion] =
+    useState("");
   const treeRef = useRef(null); // Ref for the div element where the tree will be rendered
 
   useEffect(() => {
     const fetchFamilyMembers = async () => {
       try {
-        setIsLoading(true);
         const response = await fetch(
           `http://localhost:3000/users/${user.id}/familymembers`
         );
@@ -21,8 +22,6 @@ const TreeComponent = () => {
         setFamilyMembers(data);
       } catch (error) {
         console.error("Failed to load family members:", error);
-      } finally {
-        setIsLoading(false);
       }
     };
 
@@ -120,18 +119,31 @@ const TreeComponent = () => {
   return (
     <>
       <div>
-        <h2>Family Members</h2>
-        <ul>
-          {familyMembers.map((member) => (
-            <li key={member._id}>
-              {member.firstName} {member.lastName} {member.mid}
-              <button onClick={() => handleNodeDeletion(member._id)}>
-                Delete
-              </button>
-            </li>
-          ))}
-        </ul>
-        <button id="addButton">Add Family Member</button>
+        <div className="relative w-full max-w-xs mx-auto my-4">
+          <select
+            value={selectedMemberForDeletion}
+            onChange={(e) => setSelectedMemberForDeletion(e.target.value)}
+            className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md bg-white shadow"
+          >
+            <option value="">Select a family member to delete</option>
+            {familyMembers.map(
+              (member) =>
+                member._id !== user.id && ( // Check if the member's ID is not equal to the user's ID
+                  <option key={member._id} value={member._id}>
+                    {member.firstName} {member.lastName}
+                  </option>
+                )
+            )}
+          </select>
+
+          <button
+            onClick={() => handleNodeDeletion(selectedMemberForDeletion)}
+            disabled={!selectedMemberForDeletion}
+            className="mt-2 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded disabled:bg-red-300"
+          >
+            Delete Selected Member
+          </button>
+        </div>
       </div>
       <div ref={treeRef} style={{ width: "100%", height: "700px" }}></div>
     </>

@@ -6,11 +6,11 @@ import {
 import PropTypes from "prop-types";
 import { ClipLoader } from "react-spinners";
 
-function EnhanceImage({ imageUrl }) {
+function ColorizeImage({ imageUrl }) {
   const defaultImageUrl =
-    "https://replicate.delivery/pbxt/JgdLVwRXXl4oaGqmF4Wdl7vOapnTlay32dE7B3UNgxSwylvQ/Audrey_Hepburn.jpg";
+    "https://replicate.delivery/pbxt/I9uDZgopnhz6X956zgaBoorFWbUmu5HHDyjkd3BY3ZnxVAdu/1.jpg";
   const defaultRestoredImageUrl =
-    "https://replicate.delivery/pbxt/NlSQp8BS4WLxL13eERn20OJzbMYfKpDx4usqAkywlgZY2ZtRA/tmpwg3l1z7wAudrey_Hepburn.png";
+    "https://replicate.delivery/pbxt/QDMDijnVRXYWNNW32rxQbbClRDwaIfgJSVG1rfvXVeyFB5qgA/tmpvp0xc_2a1.jpg";
 
   let [restoredImages, setRestoredImages] = useState("");
   let [isSubmitting, setIsSubmitting] = useState(false);
@@ -50,17 +50,15 @@ function EnhanceImage({ imageUrl }) {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("http://localhost:3000/restoreImage", {
+      const response = await fetch("http://localhost:3000/colorizeImage", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          image: imageUrl,
-          upscale: 2,
-          face_upsample: true,
-          background_enhance: true,
-          codeformer_fidelity: 0.8,
+          model_name: "Artistic",
+          input_image: imageUrl,
+          render_factor: 35,
         }),
       });
 
@@ -91,25 +89,22 @@ function EnhanceImage({ imageUrl }) {
       <div className="max-w-4xl min-w-[300px] mx-auto">
         {isSubmitting && (
           <div className="flex justify-center">
-            <ClipLoader color="#0000ff" size={150} />
+            <ClipLoader color="#0000ff" size={75} />
           </div>
         )}
         {imageUrl !== defaultImageUrl &&
         restoredImages === defaultRestoredImageUrl ? (
-          <>
+          <div>
             <form onSubmit={handleSubmit} className="text-center mb-8">
               <button
                 type="submit"
                 className="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700 transition duration-300 ease-in-out"
               >
-                Enhance Image
+                Colorize Image
               </button>
             </form>
-            <div>
-              <img src={imageUrl} alt="Uploaded" />{" "}
-              <p>You uploaded {imageUrl}</p>
-            </div>
-          </>
+            <img src={imageUrl} alt="Uploaded" /> <p>You uploaded {imageUrl}</p>
+          </div>
         ) : (
           <div className="flex justify-center items-center">
             <div className="max-w-xl min-w-[800px] min-h-[1000px]">
@@ -137,8 +132,8 @@ function EnhanceImage({ imageUrl }) {
   );
 }
 
-EnhanceImage.propTypes = {
+ColorizeImage.propTypes = {
   imageUrl: PropTypes.string.isRequired,
 };
 
-export default EnhanceImage;
+export default ColorizeImage;

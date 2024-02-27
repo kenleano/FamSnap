@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-// import { useAuth } from "../AuthContext"; // Adjust the path as needed
 
 const Register = () => {
-  // const { login } = useAuth();
   const navigate = useNavigate();
   // State for the child, mother, and father details
   const [childDetails, setChildDetails] = useState({
@@ -65,12 +63,14 @@ const Register = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10 space-y-4">
-      <h1 className="text-lg font-semibold text-center">Family Registration</h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Child Details */}
-        <div>
-          <h2 className="font-medium">Child Details</h2>
+    <div className="max-w-md mx-auto mt-10 space-y-6">
+      <h1 className="text-xl font-semibold text-center text-gray-800">
+        Family Registration
+      </h1>
+      <form onSubmit={handleSubmit} className="space-y-5">
+        {/* User Details */}
+        <div className="space-y-3">
+          <h2 className="font-medium text-gray-700">User Details</h2>
           <div className="space-y-2">
             <input
               type="text"
@@ -78,7 +78,7 @@ const Register = () => {
               placeholder="First Name"
               value={childDetails.firstName}
               onChange={(e) => handleChange(e, setChildDetails)}
-              className="input"
+              className="w-full p-2 border border-gray-300 rounded mt-1"
               required
             />
             <input
@@ -87,7 +87,7 @@ const Register = () => {
               placeholder="Last Name"
               value={childDetails.lastName}
               onChange={(e) => handleChange(e, setChildDetails)}
-              className="input"
+              className="w-full p-2 border border-gray-300 rounded mt-1"
               required
             />
             <input
@@ -96,7 +96,7 @@ const Register = () => {
               placeholder="Email"
               value={childDetails.email}
               onChange={(e) => handleChange(e, setChildDetails)}
-              className="input"
+              className="w-full p-2 border border-gray-300 rounded mt-1"
             />
             <input
               type="password"
@@ -104,21 +104,20 @@ const Register = () => {
               placeholder="Password"
               value={childDetails.password}
               onChange={(e) => handleChange(e, setChildDetails)}
-              className="input"
+              className="w-full p-2 border border-gray-300 rounded mt-1"
             />
             <input
               type="date"
               name="birthday"
-              placeholder="Birthday"
               value={childDetails.birthday}
               onChange={(e) => handleChange(e, setChildDetails)}
-              className="input"
+              className="w-full p-2 border border-gray-300 rounded mt-1"
             />
           </div>
         </div>
         {/* Mother Details */}
-        <div>
-          <h2 className="font-medium">Mother Details</h2>
+        <div className="space-y-3">
+          <h2 className="font-medium text-gray-700">Mother Details</h2>
           <div className="space-y-2">
             <input
               type="text"
@@ -126,7 +125,7 @@ const Register = () => {
               placeholder="First Name"
               value={motherDetails.firstName}
               onChange={(e) => handleChange(e, setMotherDetails)}
-              className="input"
+              className="w-full p-2 border border-gray-300 rounded mt-1"
               required
             />
             <input
@@ -135,7 +134,7 @@ const Register = () => {
               placeholder="Last Name"
               value={motherDetails.lastName}
               onChange={(e) => handleChange(e, setMotherDetails)}
-              className="input"
+              className="w-full p-2 border border-gray-300 rounded mt-1"
               required
             />
             <input
@@ -144,13 +143,13 @@ const Register = () => {
               placeholder="Birthday"
               value={motherDetails.birthday}
               onChange={(e) => handleChange(e, setMotherDetails)}
-              className="input"
+              className="w-full p-2 border border-gray-300 rounded mt-1"
             />
           </div>
         </div>
         {/* Father Details */}
-        <div>
-          <h2 className="font-medium">Father Details</h2>
+        <div className="space-y-3">
+          <h2 className="font-medium text-gray-700">Father Details</h2>
           <div className="space-y-2">
             <input
               type="text"
@@ -158,7 +157,7 @@ const Register = () => {
               placeholder="First Name"
               value={fatherDetails.firstName}
               onChange={(e) => handleChange(e, setFatherDetails)}
-              className="input"
+              className="w-full p-2 border border-gray-300 rounded mt-1"
               required
             />
             <input
@@ -167,7 +166,7 @@ const Register = () => {
               placeholder="Last Name"
               value={fatherDetails.lastName}
               onChange={(e) => handleChange(e, setFatherDetails)}
-              className="input"
+              className="w-full p-2 border border-gray-300 rounded mt-1"
               required
             />
             <input
@@ -176,14 +175,14 @@ const Register = () => {
               placeholder="Birthday"
               value={fatherDetails.birthday}
               onChange={(e) => handleChange(e, setFatherDetails)}
-              className="input"
+              className="w-full p-2 border border-gray-300 rounded mt-1"
             />
           </div>
         </div>
         {/* Submit Button */}
         <button
           type="submit"
-          className="w-full p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          className="w-full p-3 bg-blue-500 text-white font-medium rounded hover:bg-blue-600 transition duration-200"
         >
           Register Family
         </button>

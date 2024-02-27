@@ -34,13 +34,6 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(express.json());
 
-const BASE_URL = `https://api.cloudinary.com/v1_1/${process.env.CLOUD_NAME}`;
-console.log(process.env.API_KEY + " and " + process.env.API_SECRET);
-const auth = {
-  username: process.env.API_KEY,
-  password: process.env.API_SECRET,
-};
-
 app.post("/restoreImage", async (req, res) => {
   const imageInput = req.body; // Assuming you send the necessary input as JSON from the frontend
 
@@ -52,7 +45,7 @@ app.post("/restoreImage", async (req, res) => {
     },
     body: JSON.stringify({
       version:
-        "4af11083a13ebb9bf97a88d7906ef21cf79d1f2e5fa9d87b70739ce6b8113d29",
+        "7de2ea26c616d5bf2245ad0d5e24f0ff9a6204578a5c876db53142edd9d2cd56",
       input: imageInput,
     }),
   });
@@ -93,7 +86,36 @@ app.get("/checkStatus/:predictionId", async (req, res) => {
   }
 });
 
+app.post("/colorizeImage", async (req, res) => {
+  const imageInput = req.body; // Assuming you send the necessary input as JSON from the frontend
 
+  const response = await fetch("https://api.replicate.com/v1/predictions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Token ${process.env.REPLICATE_API_TOKEN}`,
+    },
+    body: JSON.stringify({
+      version:
+        "0da600fab0c45a66211339f1c16b71345d22f26ef5fea3dca1bb90bb5711e950",
+      input: imageInput,
+    }),
+  });
+
+  const data = await response.json();
+  res.json(data); // Sending the response back to the frontend
+});
+
+//Cloudinary API
+const BASE_URL = `https://api.cloudinary.com/v1_1/${process.env.CLOUD_NAME}`;
+
+console.log(process.env.API_KEY + " and " + process.env.API_SECRET);
+const auth = {
+  username: process.env.API_KEY,
+  password: process.env.API_SECRET,
+};
+
+//Get ALL PHOTOS
 app.get("/photos", async (req, res) => {
   const response = await axios.get(BASE_URL + "/resources/image", {
     auth,
@@ -103,6 +125,15 @@ app.get("/photos", async (req, res) => {
   });
   return res.send(response.data);
 });
+
+app.get("/albums", async (req, res) => {
+  const response = await axios.get(BASE_URL + "/folders", {
+    auth
+  });
+  return res.send(response.data);
+});
+
+
 
 app.get("/search", async (req, res) => {
   const response = await axios.get(BASE_URL + "/resources/search", {
@@ -158,10 +189,6 @@ app.get("/", (req, res) => {
   res.send("FamSnap API is running...");
 });
 
-app.get("/login", (req, res) => {
-  res.send("<p>You are in login get route</p>");
-});
-
 //Login
 app.post("/login", async (req, res) => {
   // Find the user by email
@@ -185,21 +212,18 @@ app.post("/login", async (req, res) => {
     },
   });
 });
-//Register
 
+//Register
 app.post("/register", async (req, res) => {
   const { child, mother, father } = req.body;
-
   try {
     // Function to create a user
     const createUser = async (userData, familyId = null, isChild = false) => {
       const { email, password, ...rest } = userData;
       let hashedPassword = undefined;
-
       if (isChild && password) {
         hashedPassword = await bcrypt.hash(password, 10);
       }
-
       const user = new User({
         ...rest,
         email: isChild ? email : undefined,
@@ -207,21 +231,16 @@ app.post("/register", async (req, res) => {
         // Set familyId for each member, if provided
         ...(familyId && { familyId }),
       });
-
       await user.save();
       return user;
     };
-
     // Step 1: Create the child record first but without setting familyId yet
     const childRecord = await createUser(child, null, true);
-
     // Use the child's ID as the familyId for all family members, including the child itself
     const familyId = childRecord._id;
-
     // Step 2: Create mother and father records with the child's ID as their familyId
     const motherRecord = await createUser(mother, familyId);
     const fatherRecord = await createUser(father, familyId);
-
     // Step 3: Link mother and father as partners
     await User.findByIdAndUpdate(motherRecord._id, {
       $set: { pid: fatherRecord._id, familyId: familyId },
@@ -238,7 +257,6 @@ app.post("/register", async (req, res) => {
         familyId: familyId,
       },
     });
-
     // Respond with success and the IDs of the created records
     res.status(201).send({
       message: "Family registered successfully",
@@ -251,33 +269,71 @@ app.post("/register", async (req, res) => {
     });
   } catch (err) {
     console.error(err);
-    res
-      .status(500)
+    res.status(500)
       .send({ message: "Error registering family", error: err.message });
   }
 });
 
-// app.post("/register", async (req, res) => {
-//   try {
-//     // Hash the password before saving
-//     const hashedPassword = await bcrypt.hash(req.body.password, 10);
-//     const user = new User({
-//       firstName: req.body.firstName,
-//       lastName: req.body.lastName,
-//       email: req.body.email,
-//       password: hashedPassword,
-//       birthday: req.body.birthday, // Ensure your User model supports a 'birthday' field
-//     });
+//Get all
+// Get all family members
+app.get("/users/:userId/familymembers", async (req, res) => {
+  try {
+    const user = await User.find({
+      familyId: req.params.userId,
+    });
+    res.status(200).send(user);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
 
-//     const result = await user.save();
-//     res
-//       .status(201)
-//       .send({ message: "User created successfully", userId: result._id });
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).send("Error registering new user");
-//   }
-// });
+//Get one user
+app.get("/getUser/:userId", async (req, res) => {
+  const { userId } = req.params;
+  try {
+    const user = await User.findById(userId)
+      .populate("mid")
+      .populate("fid")
+      .populate("pid")
+      .populate("familyId");
+    if (!user) {
+      return res.status(404).send("User not found");
+    }
+    res.status(200).json(user);
+  } catch (error) {
+    res.status.send(error.message);
+  }
+});
+
+//Update user
+app.put("/updateUser/:userId", async (req, res) => {
+  const { userId } = req.params;
+  const updateData = req.body;
+  try {
+    const updatedUser = await User.findByIdAndUpdate(userId, updateData, {
+      new: true,
+    });
+    if (!updatedUser) {
+      return res.status(404).send("User not found");
+    }
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    res.status(400).send(error.message);
+  }
+});
+
+// Delete a family member
+app.delete("/familymembers/:id", async (req, res) => {
+  try {
+    const user = await User.findByIdAndDelete(req.params.id);
+    if (!user) {
+      return res.status(404).send();
+    }
+    res.status(200).send(user);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
 
 //FAMILY MEMBERS CRUD
 
@@ -296,13 +352,12 @@ app.post("/addfamily", async (req, res) => {
   } = req.body;
 
   try {
-    // Optional: Hash the password if provided
     const newUser = new User({
       firstName,
       lastName,
-      email, // Ensure you handle unique constraint for email properly
+      email, //
       birthday,
-      familyId, // Assuming this is provided or determined in some way
+      familyId,
       mid,
       fid,
       pid,
@@ -316,18 +371,6 @@ app.post("/addfamily", async (req, res) => {
     res
       .status(500)
       .send({ message: "Error adding user", error: error.message });
-  }
-});
-
-// Get all family members
-app.get("/users/:userId/familymembers", async (req, res) => {
-  try {
-    const user = await User.find({
-      familyId: req.params.userId,
-    });
-    res.status(200).send(user);
-  } catch (error) {
-    res.status(500).send(error);
   }
 });
 
@@ -358,18 +401,5 @@ app.patch("/familymembers/:id", async (req, res) => {
     res.status(200).send(familyMember);
   } catch (error) {
     res.status(400).send(error);
-  }
-});
-
-// Delete a family member
-app.delete("/familymembers/:id", async (req, res) => {
-  try {
-    const user = await User.findByIdAndDelete(req.params.id);
-    if (!user) {
-      return res.status(404).send();
-    }
-    res.status(200).send(user);
-  } catch (error) {
-    res.status(500).send(error);
   }
 });

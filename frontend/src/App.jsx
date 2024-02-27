@@ -14,16 +14,16 @@ import NavBarLanding from "./components/Home/NavBarLanding";
 
 function App() {
   return (
-    <div className="App">
+    <div className="min-h-screen bg-gray-100">
       <NavBarLanding />
-      <div className="container">
+      <div className="container mx-auto px-4 py-8">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/familytree" element={<FamilyTree />} />
           <Route path="/photos/*" element={<Photos />} />
-          <Route path="/restoration" element={<Restoration />} />
+          <Route path="/restoration/*" element={<Restoration />} />
           <Route path="/profile" element={<Profile />} />
         </Routes>
       </div>
