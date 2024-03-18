@@ -19,7 +19,8 @@ const Photos = () => {
           <div className="w-1/4">
             <PhotosNav />
           </div>
-          <div className="w-3/4">
+          {/* Display Content */}
+          <div className="w-3/4 mx-9">
             <Routes>
               <Route path="/" element={<AllPhotos />} />
               <Route path="people" element={<People />} />

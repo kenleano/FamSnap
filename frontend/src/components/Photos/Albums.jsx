@@ -47,7 +47,6 @@ const AlbumViewer = () => {
   const handleClick = async (albumName) => {
     event.preventDefault();
     setSearchValue(albumName);
-
     const responseJson = await searchImages(albumName, nextCursor);
     setImages(responseJson.resources);
     setCurrentAlbum(albumName);
@@ -82,7 +81,7 @@ const AlbumViewer = () => {
       {currentAlbum && (
         <>
           <h3>{currentAlbum}</h3>
-          <div className="images grid gap-2 grid-cols-[repeat(auto-fill,minmax(250px,1fr))]">
+          <div className="grid gap-2 grid-cols-[repeat(auto-fill,minmax(250px,1fr))]">
             {images.map((image) => (
               <img
                 key={image.public_id}

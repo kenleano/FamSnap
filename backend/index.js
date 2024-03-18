@@ -9,14 +9,38 @@ import cors from "cors";
 import dotenv from "dotenv";
 import axios from "axios";
 import multer from "multer";
+import { v2 as cloudinary } from "cloudinary";
+ // This should be at the very top of your main file
+
+
 import Replicate from "replicate";
 import fs from "fs";
 // const { json } = require('body-parser');
 const { parsed: config } = dotenv.config();
 
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.API_KEY,
+  api_secret: process.env.API_SECRET,
+});
+
+// console.log(cloudinary);
+// console.log(cloudinary.v2.uploader);
+
+
 const PORT = 3000;
 const mongoDBURL =
   "mongodb+srv://admin:1234@famsnap.iaojsaa.mongodb.net/FamSnap?retryWrites=true&w=majority";
+// Just for testing purpose
+cloudinary.uploader.add_tag(
+  "example_tag",
+  ["cgyrhcttclfnd8ia3wfi"],
+  function (error, result) {
+    if (error) console.log("Error:", error);
+    else console.log("Result:", result);
+  }
+);
+
 
 const app = express();
 // Listen on the specified port
@@ -128,12 +152,10 @@ app.get("/photos", async (req, res) => {
 
 app.get("/albums", async (req, res) => {
   const response = await axios.get(BASE_URL + "/folders", {
-    auth
+    auth,
   });
   return res.send(response.data);
 });
-
-
 
 app.get("/search", async (req, res) => {
   const response = await axios.get(BASE_URL + "/resources/search", {
@@ -145,6 +167,106 @@ app.get("/search", async (req, res) => {
 
   return res.send(response.data);
 });
+
+app.post("/addTagsToSingleAsset", async (req, res) => {
+  const { tags, publicId } = req.body; // Expecting 'tags' and 'publicId' from the request body
+
+  try {
+    const result = await addTagsToSingleAsset(tags, publicId);
+    res.json({ success: true, result });
+  } catch (error) {
+    console.error("Error adding tags to asset:", error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+const addTagsToSingleAsset = async (tags, publicId) => {
+  try {
+    const result = await cloudinary.uploader.add_tag(tags, [publicId]); // Note: [publicId] makes it an array
+    console.log(result); // Log the result to see the updated asset information
+    return result;
+  } catch (error) {
+    console.error("Error adding tags:", error);
+    throw error; // Rethrow or handle error as needed
+  }
+};
+
+app.post("/replaceTags", async (req, res) => {
+  const { tags, publicId } = req.body; // Expecting 'tags' and 'publicId' from the request body
+
+  try {
+    const result = await replaceTags(tags, publicId);
+    res.json({ success: true, result });
+  } catch (error) {
+    console.error("Error replacing tags:", error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+const replaceTags = async (tags, publicId) => {
+  try {
+    const result = await cloudinary.uploader.replace_tag(tags, [publicId]);
+    console.log(result);
+    return result;
+  } catch (error) {
+    console.error("Error replacing tags:", error);
+    throw error;
+  }
+};
+
+// Inside your routes or controller file
+app.get('/photos/:publicId', async (req, res) => {
+    try {
+        const details = await getAssetDetails(req.params.publicId);
+        res.json(details);
+    } catch (error) {
+        console.error("Error fetching asset details:", error);
+        res.status(500).send(error.message);
+    }
+});
+
+const getAssetDetails = async (publicId) => {
+  try {
+    // Fetch the details of the asset
+    const result = await cloudinary.api.resource(publicId);
+    console.log(result); // You can see all details of the asset here
+    return result;
+  } catch (error) {
+    console.error("Error fetching asset details:", error);
+    throw error;
+  }
+};
+
+app.delete("/deletePhoto/:publicId", async (req, res) => {
+  try {
+    const result = await deleteImage(req.params.publicId);
+    res.json({ success: true, result });
+  } catch (error) {
+    console.error("Error deleting asset:", error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+const deleteImage = async (publicId) => {
+  try {
+    const result = await cloudinary.uploader.destroy(publicId);
+    console.log(result);
+    return result;
+  } catch (error) {
+    console.error("Error deleting asset:", error);
+    throw error;
+  }
+}
+
+
+// Replace 'your_public_id' with the actual public_id of the asset you want to fetch
+// getAssetDetails("your_public_id").then((asset) => {
+//   if (asset.tags && asset.tags.length > 0) {
+//     console.log("Tags:", asset.tags);
+//   } else {
+//     console.log("No tags found for this asset.");
+//   }
+// });
 
 //UPLOAD:
 // const multer = require("multer");
@@ -159,15 +281,32 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
+// app.post("/upload", upload.single("image"), async (req, res) => {
+//   console.log(req.file); // Check if the file is received
+//   if (!req.file) {
+//     return res.status(400).send("No file uploaded.");
+//   }
+//   try {
+//     const filePath = req.file.path;
+//     const cloudinaryResponse = await uploadToCloudinary(filePath);
+//     res.send(cloudinaryResponse);
+//   } catch (error) {
+//     console.error("Upload to Cloudinary failed:", error);
+//     res.status(500).send("Failed to upload image.");
+//   }
+// });
+
 app.post("/upload", upload.single("image"), async (req, res) => {
-  console.log(req.file); // Check if the file is received
   if (!req.file) {
     return res.status(400).send("No file uploaded.");
   }
   try {
-    const filePath = req.file.path;
-    const cloudinaryResponse = await uploadToCloudinary(filePath);
-    res.send(cloudinaryResponse);
+    const filePath = req.file.path; // Path to the image file
+    const cloudinaryResponse = await cloudinary.uploader.upload(filePath, {
+      categorization: "aws_rek_tagging",
+      auto_tagging: 0.9,
+    });
+    res.send(cloudinaryResponse); // This response will include the auto-generated tags by Amazon Rekognition
   } catch (error) {
     console.error("Upload to Cloudinary failed:", error);
     res.status(500).send("Failed to upload image.");
@@ -269,7 +408,8 @@ app.post("/register", async (req, res) => {
     });
   } catch (err) {
     console.error(err);
-    res.status(500)
+    res
+      .status(500)
       .send({ message: "Error registering family", error: err.message });
   }
 });
@@ -402,4 +542,48 @@ app.patch("/familymembers/:id", async (req, res) => {
   } catch (error) {
     res.status(400).send(error);
   }
+});
+
+
+
+
+app.get('/fulltree', (req, res) => {
+  fs.readFile('./db.json', 'utf8', (err, data) => {
+    if (err) {
+      console.error(err);
+      res.status(500).send('Internal Server Error');
+    } else {
+      const nodes = JSON.parse(data);
+      res.json(nodes); // Send the nodes data as JSON
+    }
+  });
+});
+
+app.post('/fulltree', (req, res) => {
+  fs.readFile('./db.json', 'utf8', (err, data) => {
+    if (err) {
+      console.error(err);
+      res.status(500).send('Internal Server Error');
+    } else {
+      let nodes = JSON.parse(data);
+      req.body.addNodesData.forEach(node => {
+        nodes.push(node);
+      });
+      req.body.updateNodesData.forEach(node => {
+        const index = nodes.findIndex(n => n.id === node.id);
+        if (index > -1) {
+          nodes[index] = node;
+        }
+      });
+      nodes = nodes.filter(node => node.id !== req.body.removeNodeId);
+      fs.writeFile('./db.json', JSON.stringify(nodes), 'utf8', (err) => {
+        if (err) {
+          console.error(err);
+          res.status(500).send('Internal Server Error');
+        } else {
+          res.json(nodes); // Send the updated nodes data as JSON
+        }
+      });
+    }
+  });
 });
