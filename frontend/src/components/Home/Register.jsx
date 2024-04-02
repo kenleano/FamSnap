@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -63,22 +64,22 @@ const Register = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10 space-y-6">
-      <h1 className="text-xl font-semibold text-center text-gray-800">
+    <div className="min-h-screen w-full bg-blue-50 px-16 py-8">
+    <div className="max-w-lg mx-auto mt-10 space-y-8  bg-white p-6 rounded-lg shadow-lg">
+      <h1 className="text-2xl font-bold text-center text-gray-900">
         Family Registration
       </h1>
-      <form onSubmit={handleSubmit} className="space-y-5">
-        {/* User Details */}
-        <div className="space-y-3">
-          <h2 className="font-medium text-gray-700">User Details</h2>
-          <div className="space-y-2">
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="space-y-4">
+          <h2 className="text-lg font-semibold text-gray-700">User Details</h2>
+          <div className="space-y-3">
             <input
               type="text"
               name="firstName"
               placeholder="First Name"
               value={childDetails.firstName}
               onChange={(e) => handleChange(e, setChildDetails)}
-              className="w-full p-2 border border-gray-300 rounded mt-1"
+              className="w-full p-4 text-gray-700 bg-white border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-300 ease-in-out"
               required
             />
             <input
@@ -87,7 +88,7 @@ const Register = () => {
               placeholder="Last Name"
               value={childDetails.lastName}
               onChange={(e) => handleChange(e, setChildDetails)}
-              className="w-full p-2 border border-gray-300 rounded mt-1"
+              className="w-full p-4 text-gray-700 bg-white border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-300 ease-in-out"
               required
             />
             <input
@@ -96,7 +97,7 @@ const Register = () => {
               placeholder="Email"
               value={childDetails.email}
               onChange={(e) => handleChange(e, setChildDetails)}
-              className="w-full p-2 border border-gray-300 rounded mt-1"
+              className="w-full p-4 text-gray-700 bg-white border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-300 ease-in-out"
             />
             <input
               type="password"
@@ -104,28 +105,29 @@ const Register = () => {
               placeholder="Password"
               value={childDetails.password}
               onChange={(e) => handleChange(e, setChildDetails)}
-              className="w-full p-2 border border-gray-300 rounded mt-1"
+              className="w-full p-4 text-gray-700 bg-white border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-300 ease-in-out"
             />
             <input
               type="date"
               name="birthday"
               value={childDetails.birthday}
               onChange={(e) => handleChange(e, setChildDetails)}
-              className="w-full p-2 border border-gray-300 rounded mt-1"
+              className="w-full p-4 text-gray-700 bg-white border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-300 ease-in-out"
             />
           </div>
         </div>
-        {/* Mother Details */}
-        <div className="space-y-3">
-          <h2 className="font-medium text-gray-700">Mother Details</h2>
-          <div className="space-y-2">
+        <div className="space-y-4">
+          <h2 className="text-lg font-semibold text-gray-700">
+            Mother Details
+          </h2>
+          <div className="space-y-3">
             <input
               type="text"
               name="firstName"
               placeholder="First Name"
               value={motherDetails.firstName}
               onChange={(e) => handleChange(e, setMotherDetails)}
-              className="w-full p-2 border border-gray-300 rounded mt-1"
+              className="w-full p-4 text-gray-700 bg-white border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-300 ease-in-out"
               required
             />
             <input
@@ -134,7 +136,7 @@ const Register = () => {
               placeholder="Last Name"
               value={motherDetails.lastName}
               onChange={(e) => handleChange(e, setMotherDetails)}
-              className="w-full p-2 border border-gray-300 rounded mt-1"
+              className="w-full p-4 text-gray-700 bg-white border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-300 ease-in-out"
               required
             />
             <input
@@ -143,21 +145,22 @@ const Register = () => {
               placeholder="Birthday"
               value={motherDetails.birthday}
               onChange={(e) => handleChange(e, setMotherDetails)}
-              className="w-full p-2 border border-gray-300 rounded mt-1"
+              className="w-full p-4 text-gray-700 bg-white border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-300 ease-in-out"
             />
           </div>
         </div>
-        {/* Father Details */}
-        <div className="space-y-3">
-          <h2 className="font-medium text-gray-700">Father Details</h2>
-          <div className="space-y-2">
+        <div className="space-y-4">
+          <h2 className="text-lg font-semibold text-gray-700">
+            Father Details
+          </h2>
+          <div className="space-y-3">
             <input
               type="text"
               name="firstName"
               placeholder="First Name"
               value={fatherDetails.firstName}
               onChange={(e) => handleChange(e, setFatherDetails)}
-              className="w-full p-2 border border-gray-300 rounded mt-1"
+              className="w-full p-4 text-gray-700 bg-white border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-300 ease-in-out"
               required
             />
             <input
@@ -166,7 +169,7 @@ const Register = () => {
               placeholder="Last Name"
               value={fatherDetails.lastName}
               onChange={(e) => handleChange(e, setFatherDetails)}
-              className="w-full p-2 border border-gray-300 rounded mt-1"
+              className="w-full p-4 text-gray-700 bg-white border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-300 ease-in-out"
               required
             />
             <input
@@ -175,18 +178,27 @@ const Register = () => {
               placeholder="Birthday"
               value={fatherDetails.birthday}
               onChange={(e) => handleChange(e, setFatherDetails)}
-              className="w-full p-2 border border-gray-300 rounded mt-1"
+              className="w-full p-4 text-gray-700 bg-white border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-300 ease-in-out"
             />
           </div>
         </div>
-        {/* Submit Button */}
         <button
           type="submit"
-          className="w-full p-3 bg-blue-500 text-white font-medium rounded hover:bg-blue-600 transition duration-200"
+          className="w-full p-4 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
         >
           Register Family
         </button>
+        <p className="text-center text-sm text-gray-600 mt-4">
+          Are you an artist?{" "}
+          <Link
+            to="/artist-registration"
+            className="text-blue-500 hover:text-blue-600"
+          >
+            Register here
+          </Link>
+        </p>
       </form>
+    </div>
     </div>
   );
 };

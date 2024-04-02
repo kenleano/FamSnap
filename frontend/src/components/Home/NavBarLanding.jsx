@@ -3,13 +3,16 @@ import { Link, useMatch, useResolvedPath } from "react-router-dom";
 import { useAuth } from "../AuthContext.jsx";
 
 const NavBarLanding = () => {
-  const { isLoggedIn } = useAuth();
+  const { user, userType } = useAuth();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false); // State to manage dropdown visibility
 
   // Functions to handle mouse entering and leaving
   const showDropdown = () => setIsDropdownOpen(true);
   const hideDropdown = () => setIsDropdownOpen(false);
-
+  const isLoggedIn = user !== null;
+  
+  const status = userType;
+  console.log("userType");
   return (
     <header className="sticky top-0 bg-white shadow-md flex items-center justify-between px-8 py-3.5 w-full z-10">
       {/* Logo and home link */}
@@ -22,7 +25,7 @@ const NavBarLanding = () => {
             {/* SVG path */}
           </svg>
           <span className="ml-2 text-xl font-bold text-gray-800 hover:text-blue-700">
-            FamSnap
+            FamSnap {status}
           </span>
         </Link>
       </div>
@@ -30,8 +33,9 @@ const NavBarLanding = () => {
       {/* Navigation links */}
       <nav className="flex-grow">
         <ul className="flex justify-end space-x-4">
-          {isLoggedIn ? (
+          {isLoggedIn && status =="regular"   ? (
             <>
+              {/* regular user */}
               <li>
                 <CustomLink
                   to="/familytree"
@@ -95,6 +99,14 @@ const NavBarLanding = () => {
               </li>
               <li>
                 <CustomLink
+                  to="/userrequests"
+                  className="text-gray-800 hover:text-blue-700"
+                >
+                  Requests
+                </CustomLink>
+              </li>
+              <li>
+                <CustomLink
                   to="/profile"
                   className="text-gray-800 hover:text-blue-700"
                 >
@@ -102,9 +114,28 @@ const NavBarLanding = () => {
                 </CustomLink>
               </li>
             </>
-          ) : (
+          ) : isLoggedIn && status =="artist" ? (
             <>
+               {/* artist user */}
+               
               <CustomLink
+                to="/requests"
+                className="text-gray-800 hover:text-blue-700"
+              >
+                Requests
+              </CustomLink>
+              <CustomLink
+                to="/artist-dashboard"
+                className="text-gray-800 hover:text-blue-700"
+              >
+                Dashboard
+              </CustomLink>
+          
+            </>
+          ): (
+            <>
+           {/* logged out  */}
+           <CustomLink
                 to="/login"
                 className="text-gray-800 hover:text-blue-700"
               >

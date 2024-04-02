@@ -153,110 +153,98 @@ const AllPhotos = () => {
     }
   };
 
+  console.log("activeImage", activeImage);
   return (
     <>
-      <UploadWidget />
-      <form onSubmit={handleFormSubmit}>
-        <input
-          value={searchValue}
-          onChange={(event) => setSearchValue(event.target.value)}
-          required
-          placeholder="Enter a search value..."
-        />
-        <button type="submit">Search</button>
-        <button type="button" onClick={resetForm}>
-          Clear
+    <UploadWidget />
+    <br/>
+    <form onSubmit={handleFormSubmit} className="flex items-center space-x-2 mb-4">
+     
+      <input
+        value={searchValue}
+        onChange={(event) => setSearchValue(event.target.value)}
+        required
+        placeholder="Enter a search value..."
+        className="form-input px-4 py-2 rounded-md border border-gray-300 w-full focus:ring-blue-500 focus:border-blue-500"
+      />
+      <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+        Search
+      </button>
+      <button type="button" onClick={resetForm} className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
+        Clear
+      </button>
+    </form>
+  
+    <div className="grid gap-4 grid-cols-[repeat(auto-fill,minmax(250px,1fr))]">
+      {imageList.map((image) => (
+        <button key={image.public_id} onClick={() => handleImageClick(image)} className="focus:outline-none">
+          <img
+            className="w-full h-48 object-cover rounded-lg shadow"
+            src={image.url}
+            alt=""
+          />
         </button>
-      </form>
-      <div className="grid gap-2 grid-cols-[repeat(auto-fill,minmax(250px,1fr))]">
-        {imageList.map((image) => (
-          <button key={image.public_id} onClick={() => handleImageClick(image)}>
-            <img
-              className="w-full h-full object-cover"
-              src={image.url}
-              alt={image.public_id}
-            ></img>
-          </button>
-        ))}
-      </div>
-      <div className="footer">
-        {nextCursor && (
-          <button onClick={handleLoadMoreButtonClick}>Load More</button>
-        )}
-      </div>
+      ))}
+    </div>
+  
+    <div className="flex justify-center mt-6">
+      {nextCursor && (
+        <button onClick={handleLoadMoreButtonClick} className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
+          Load More
+        </button>
+      )}
+    </div>
+  
       {activeImage && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 overflow-y-auto">
-          <div className="flex items-center justify-center min-h-screen">
-            <div className="bg-white rounded-lg shadow dark:bg-gray-800 m-4 sm:m-8 max-w-lg w-full">
-              <div className="flex justify-between items-center p-4 border-b">
-                <h3 className="text-xl font-medium text-white">
-                  Edit Image Tags
-                </h3>
-                <button
-                  className="text-black dark:text-white"
-                  onClick={() => setActiveImage(null)}
-                >
-                  ✕
-                </button>
+  <div className="fixed inset-0 bg-gray-900 bg-opacity-50 z-50 overflow-y-auto">
+    <div className="flex items-center justify-center min-h-screen px-4 text-center">
+      <div className="bg-white rounded-lg shadow-xl transform transition-all my-8 max-w-4xl w-full">
+        <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+          <div className="sm:flex sm:items-start">
+            <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+              <h3 className="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+                Edit Image Tags
+              </h3>
+              <div className="mt-2">
+                <img src={activeImage.url} alt={activeImage.public_id} className="rounded-lg h-auto w-full mx-auto"/>
               </div>
-              <div className="flex">
-                <div className="w-full p-4">
-                  <img
-                    src={activeImage.url}
-                    alt={activeImage.public_id}
-                    className="rounded"
-                  />
+              <div className="mt-4">
+                <div className="flex flex-wrap gap-2 items-center justify-center">
+                  {editableTags.map((tag, index) => (
+                    <span key={index} className="flex items-center gap-1 bg-blue-100 text-blue-700 px-2 py-1 rounded-full text-sm">
+                      {tag}
+                      <button onClick={() => removeTag(index)} className="text-blue-500 text-sm">
+                        &times;
+                      </button>
+                    </span>
+                  ))}
                 </div>
-                <div className="w-1/2 p-4 space-y-4">
-                  <div className="flex flex-wrap gap-2 p-2 border rounded">
-                    {editableTags.map((tag, index) => (
-                      <div
-                        key={index}
-                        className="flex items-center gap-1 bg-blue-100 px-2 py-1 rounded-full"
-                      >
-                        <span>{tag}</span>
-                        <button
-                          onClick={() => removeTag(index)}
-                          className="text-blue-500 text-sm"
-                        >
-                          ✕
-                        </button>
-                      </div>
-                    ))}
-                    <input
-                      type="text"
-                      value={tagInput}
-                      onChange={(e) => setTagInput(e.target.value)}
-                      onKeyPress={addTag}
-                      placeholder="Add a tag..."
-                      className="flex-1 border-none focus:ring-0"
-                      list="family-list"
-                    />
-                    <datalist id="family-list">
-                      {familyMembers.map((member, index) => (
-                        <option key={index} value={`${member.firstName} ${member.lastName}`} /> // Assuming 'name' is the field you want to suggest
-                      ))}
-                    </datalist>
-                  </div>
-                  <p>{activeImage.public_id}</p>
-                  <button
-                    className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
-                    onClick={saveTags}
-                  >
-                    Save Tags
-                  </button>
-                  <button
-                    className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
-                    onClick={() => deletePhoto(activeImage.public_id)}
-                  >
-                    Delete
-                  </button>
-                </div>
+                <input type="text" value={tagInput} onChange={e => setTagInput(e.target.value)} onKeyPress={addTag} placeholder="Add a tag..." className="form-input mt-3 w-full rounded-md border-gray-300 shadow-sm" list="family-list"/>
+                <datalist id="family-list">
+                  {familyMembers.map((member, index) => (
+                    <option key={index} value={`${member.firstName} ${member.lastName}`} />
+                  ))}
+                </datalist>
               </div>
             </div>
           </div>
         </div>
-      )}
+        <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+          <button onClick={saveTags} className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm">
+            Save Tags
+          </button>
+          <button onClick={() => setActiveImage(null)} className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+            Close
+          </button>
+          <button onClick={() => deletePhoto(activeImage.public_id)} className="mt-3 w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:mt-0 sm:w-auto sm:text-sm">
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
+
     </>
   );
 };

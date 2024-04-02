@@ -11,12 +11,19 @@ import Profile from "./components/Profile";
 import Login from "./components/Home/Login";
 import Register from "./components/Home/Register";
 import NavBarLanding from "./components/Home/NavBarLanding";
+import ArtistRegistration from "./components/Artist/ArtistRegistration";  
+import ArtistLogin from "./components/Artist/ArtistLogin";
+import ArtistDashboard from "./components/Artist/ArtistDashboard";
+import Requests from "./components/Artist/Requests";
+import Contact from "./components/Restoration/Contact";
+import StripeContainer from "./components/Restoration/StripeContainer";
+import UserRequests from "./components/Home/UserRequests";
 
 function App() {
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className=" bg-pink-50">
       <NavBarLanding />
-      <div className="container mx-auto px-4 py-8">
+      <div className="">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
@@ -25,6 +32,14 @@ function App() {
           <Route path="/photos/*" element={<Photos />} />
           <Route path="/restoration/*" element={<Restoration />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/artist-registration" element={<ArtistRegistration />} />
+          <Route path="/artist-login" element={<ArtistLogin />} />
+          <Route path="/artist-dashboard" element={<ArtistDashboard />} />
+          <Route path="/requests" element={<Requests />} />
+          <Route path="/userrequests" element={<UserRequests />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/payment" element={<StripeContainer />} />
+          
         </Routes>
       </div>
     </div>

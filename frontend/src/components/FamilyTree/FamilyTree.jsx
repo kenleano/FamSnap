@@ -13,7 +13,9 @@ const FamilyTree = () => {
     <div className="flex flex-col items-center justify-center py-10">
       <h2>{user.lastName} Family Tree</h2>
       {/* <AddFamilyMemberForm /> */}
+      <div className="">
       <TestTree />
+      </div>
       {/* <SideProfile /> */}
     </div>
   );

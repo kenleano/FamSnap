@@ -15,6 +15,7 @@ const userSchema = new mongoose.Schema({
   fid: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: false }, // Father's ID
   pid: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: false }, // Partner's ID
 });
+
 userSchema.path("email").index({ unique: true, sparse: true }); // Add this line
 
 const User = mongoose.model("User", userSchema);

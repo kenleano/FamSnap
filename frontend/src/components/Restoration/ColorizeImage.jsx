@@ -5,8 +5,13 @@ import {
 } from "react-compare-slider";
 import PropTypes from "prop-types";
 import { ClipLoader } from "react-spinners";
+import ImageUpload from "./ImageUploader";
+import { useNavigate } from "react-router-dom";
 
-function ColorizeImage({ imageUrl }) {
+
+
+function ColorizeImage({ setImageUrl, imageUrl }) {
+  const navigate = useNavigate();
   const defaultImageUrl =
     "https://replicate.delivery/pbxt/I9uDZgopnhz6X956zgaBoorFWbUmu5HHDyjkd3BY3ZnxVAdu/1.jpg";
   const defaultRestoredImageUrl =
@@ -81,12 +86,19 @@ function ColorizeImage({ imageUrl }) {
   if (!restoredImages) {
     setRestoredImages(defaultRestoredImageUrl);
   }
+  const handlePurchaseClick = () => {
+    // Navigate to /payment and pass imageUrl as state
+    navigate("/payment", { state: { restoredImages } });
+  };
 
   return (
-    <div className="flex justify-center py-10 overflow-x-hidden">
+    <div className="flex justify-center py-5 overflow-x-hidden">
       {" "}
       {/* Added overflow-x-hidden */}
       <div className="max-w-4xl min-w-[300px] mx-auto">
+      <div className="flex justify-center my-4">
+          <ImageUpload setImageUrl={setImageUrl} />
+        </div>
         {isSubmitting && (
           <div className="flex justify-center">
             <ClipLoader color="#0000ff" size={75} />
@@ -108,6 +120,19 @@ function ColorizeImage({ imageUrl }) {
         ) : (
           <div className="flex justify-center items-center">
             <div className="max-w-xl min-w-[800px] min-h-[1000px]">
+            {restoredImages !== defaultRestoredImageUrl && (
+                <div className="flex justify-center mt-4 my-4">
+                  {" "}
+                  {/* This wrapper ensures horizontal centering */}
+                  <button
+                    type="button"
+                    onClick={handlePurchaseClick}
+                    className="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700 transition duration-300 ease-in-out"
+                  >
+                    Purchase for $1.99!
+                  </button>
+                </div>
+              )}
               <ReactCompareSlider
                 itemOne={
                   <ReactCompareSliderImage
@@ -135,5 +160,10 @@ function ColorizeImage({ imageUrl }) {
 ColorizeImage.propTypes = {
   imageUrl: PropTypes.string.isRequired,
 };
+
+ColorizeImage.propTypes = {
+  setImageUrl: PropTypes.string.isRequired,
+};
+
 
 export default ColorizeImage;

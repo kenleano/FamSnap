@@ -3,47 +3,49 @@ import { Link, useMatch, useResolvedPath } from "react-router-dom";
 
 const PhotosNav = () => {
   return (
-    <nav className="top-0 bg-white items-start w-full px-8 py-2">
-      <ul className="w-full">
-        <CustomLink
-          to="/photos"
-          className="text-gray-800 hover:text-blue-700 py-2 px-4 transition duration-300 ease-in-out block mb-2 w-full text-left"
-        >
-          All Photos
-        </CustomLink>
-        <CustomLink
-          to="/photos/people"
-          className="text-gray-800 hover:text-blue-700 py-2 px-4 transition duration-300 ease-in-out block mb-2 w-full text-left"
-        >
-          People
-        </CustomLink>
-        <CustomLink
-          to="/photos/albums"
-          className="text-gray-800 hover:text-blue-700 py-2 px-4 transition duration-300 ease-in-out block mb-2 w-full text-left"
-        >
-          Albums
-        </CustomLink>
-      </ul>
+    <nav className="bg-white shadow flex items-center justify-between px-4 py-3 rounded-lg">
+      <NavItem to="/photos">
+        <img
+          src="https://uxwing.com/wp-content/themes/uxwing/download/video-photography-multimedia/photo-gallery-icon.png"
+          alt="All Photos Icon"
+          className="inline-block w-7 h-auto mr-2"
+        />
+        All Photos
+      </NavItem>
+      <NavItem to="/photos/people">
+        <img
+          src="https://uxwing.com/wp-content/themes/uxwing/download/peoples-avatars/man-and-woman-user-icon.png"
+          alt="People Icon"
+          className="inline-block w-7 h-auto mr-2"
+        />
+        People
+      </NavItem>
+      <NavItem to="/photos/albums">
+        <img
+          src="https://uxwing.com/wp-content/themes/uxwing/download/education-school/read-book-icon.png"
+          alt="Albums Icon"
+          className="inline-block w-7 h-auto mr-2"
+        />
+        Albums
+      </NavItem>
     </nav>
   );
 };
 
-function CustomLink({ to, children, ...props }) {
+const NavItem = ({ to, children }) => {
   const resolvedPath = useResolvedPath(to);
-  const isActive = useMatch({ path: resolvedPath.pathname, end: true });
-
-  // Adjust active class styling as necessary
-  const activeClass = "bg-blue-100"; // Soft background color for active link
-  const baseClass =
-    "text-gray-800 hover:text-blue-700 py-2 px-4 transition duration-300 ease-in-out block mb-2 w-full text-left";
+  const isActive = useMatch({ path: resolvedPath.pathname });
 
   return (
-    <li className={`${isActive ? activeClass : ""} rounded`}>
-      <Link to={to} {...props} className={baseClass}>
-        {children}
-      </Link>
-    </li>
+    <Link
+      to={to}
+      className={`text-gray-800 hover:text-blue-700 hover:bg-blue-50 py-2 px-4 transition duration-300 ease-in-out rounded-lg ${
+        isActive ? "bg-blue-100" : ""
+      }`}
+    >
+      {children}
+    </Link>
   );
-}
+};
 
 export default PhotosNav;

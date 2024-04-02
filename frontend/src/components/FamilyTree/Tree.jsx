@@ -119,7 +119,7 @@ const TreeComponent = () => {
   return (
     <>
       <div>
-        <div className="relative w-full max-w-xs mx-auto my-4">
+        <div className="relative w-full max-w- mx-auto my-4">
           <select
             value={selectedMemberForDeletion}
             onChange={(e) => setSelectedMemberForDeletion(e.target.value)}

@@ -83,7 +83,7 @@ const FamilyTreeComponent = () => {
 
   return (
     <div>
-      <link rel="icon" href="/favicon.png" type="image/x-icon" />
+      {/* <link rel="icon" href="/favicon.png" type="image/x-icon" /> */}
       <div id="tree"></div>
     </div>
   );

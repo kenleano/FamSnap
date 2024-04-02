@@ -12,9 +12,7 @@ const UploadWidget = () => {
         cloudName: "dx4yz4grz",
         uploadPreset: "oqqyky8l",
         showAdvancedOptions: true,
-          //ADDS TAGS WHEN UPLOADED
-        // categorization: "aws_rek_tagging", // Add this line
-        // autoTagging: 0.7,
+
       },
       function (error, result) {
         if (result.event === "success") {
@@ -26,6 +24,7 @@ const UploadWidget = () => {
       }
     );
       
+    
     console.log(cloudinaryRef.current);
   }, []);
   return (

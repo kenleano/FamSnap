@@ -1,19 +1,19 @@
-  import React, {
-    createContext,
-    useContext,
-    useState,
-    useEffect,
-    useMemo,
+
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useMemo,
 } from "react";
 
+const AuthContext = createContext();
 
-  const AuthContext = createContext();
-
-  export function useAuth() {
-    return useContext(AuthContext);
-  }
-export const AuthProvider = ({ children }) => {
+export function useAuth() {
+  return useContext(AuthContext);
+}export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")));
+  const [userType, setUserType] = useState(localStorage.getItem("type"));
 
   useEffect(() => {
     // Update localStorage when user changes
@@ -24,15 +24,32 @@ export const AuthProvider = ({ children }) => {
     }
   }, [user]);
 
+  // Add useEffect for userType
+  useEffect(() => {
+    // Update localStorage when userType changes
+    localStorage.setItem("type", userType);
+  }, [userType]);
+
   const isLoggedIn = useMemo(() => !!user, [user]);
 
   const login = (userData) => {
     setUser(userData.user); // Store user data on login
   };
 
+  const category = (type) => {
+    setUserType(type); // Update the userType state, localStorage will be updated by useEffect
+  };
+
   const logout = () => {
     setUser(null); // Clear user data on logout
+    setUserType(null); // Clear user type
+    // Also, clear localStorage for both user and type
+    localStorage.removeItem("user");
+    localStorage.removeItem("type");
   };
+
+
+
 
   const updateUser = async (updatedDetails) => {
     try {
@@ -60,7 +77,7 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, isLoggedIn, login, logout, updateUser }}
+      value={{ user, isLoggedIn, login, logout, updateUser, category, userType }}
     >
       {children}
     </AuthContext.Provider>
