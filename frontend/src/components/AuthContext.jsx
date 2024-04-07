@@ -44,8 +44,21 @@ export function useAuth() {
     setUser(null); // Clear user data on logout
     setUserType(null); // Clear user type
     // Also, clear localStorage for both user and type
+    deleteFileContent();
     localStorage.removeItem("user");
     localStorage.removeItem("type");
+  };
+
+  const deleteFileContent = async () => {
+    try {
+      // Delete content of db.json
+      await fetch("http://localhost:3000/deleteFileContent", {
+        method: "DELETE",
+      });
+    } catch (error) {
+      console.error("Error deleting file content:", error);
+      // Handle error appropriately
+    }
   };
 
 

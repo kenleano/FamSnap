@@ -30,7 +30,7 @@ const AlbumViewer = () => {
 
   const handleClick = (albumPath) => {
     // Ensure the path is encoded for safe URL construction
-    navigate(`/album/${encodeURIComponent(albumPath)}`);
+    navigate(`/photos/albums/${encodeURIComponent(albumPath)}`);
   };
 
   return (

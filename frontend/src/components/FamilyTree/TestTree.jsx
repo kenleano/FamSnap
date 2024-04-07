@@ -47,7 +47,7 @@ const FamilyTreeComponent = () => {
   useEffect(() => {
     // Fetching the family tree data from the server
     fetch(
-        `http://localhost:3000/fulltree`
+      `http://localhost:3000/users/${user.id}/familymembers`
       )
       .then(response => response.json())
       .then(setData)
@@ -64,7 +64,7 @@ const FamilyTreeComponent = () => {
       });
 
       family.onUpdateNode((args) => {
-        fetch('http://localhost:3000/fulltree', {
+        fetch('http://localhost:3000/updatetree', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -81,8 +81,12 @@ const FamilyTreeComponent = () => {
     }
   }, [nodes]); // This will re-run the effect when `data` changes
 
+
+  
+
   return (
     <div>
+    
       {/* <link rel="icon" href="/favicon.png" type="image/x-icon" /> */}
       <div id="tree"></div>
     </div>

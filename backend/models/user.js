@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 
+
 const userSchema = new mongoose.Schema({
   firstName: { type: String, required: true },
   lastName: { type: String, required: false },
@@ -14,6 +15,7 @@ const userSchema = new mongoose.Schema({
   mid: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: false }, // Mother's ID
   fid: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: false }, // Father's ID
   pid: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: false }, // Partner's ID
+
 });
 
 userSchema.path("email").index({ unique: true, sparse: true }); // Add this line

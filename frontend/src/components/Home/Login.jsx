@@ -28,9 +28,34 @@ const Login = () => {
       localStorage.setItem("type", "regular");
       category("regular");
       login(userData);
-      navigate("/familytree");
+      console.log("LOGIN userData", userData);
+      writeToFile(userData.user.id);
+      navigate("/profile");
     } catch (error) {
       console.error(error);
+    }
+  };
+
+  
+  const writeToFile = async (userId) => {
+    try {
+      const response = await fetch("http://localhost:3000/familytree/" + userId);
+      console.log("response", response);
+      if (!response.ok) {
+        throw new Error("Failed to fetch family tree data");
+      }
+      const familyTreeData = await response.json();
+      // Write data to db.json
+      await fetch("http://localhost:3000/writeToFile", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(familyTreeData),
+      });
+    } catch (error) {
+      console.error("Error writing to file:", error);
+      // Handle error appropriately
     }
   };
 

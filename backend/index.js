@@ -12,6 +12,7 @@ import axios from "axios";
 import multer from "multer";
 import { v2 as cloudinary } from "cloudinary";
 import Request from "./models/requests.js";
+import Node from "./models/node.js";
 
 // This should be at the very top of your main file
 
@@ -181,7 +182,6 @@ app.get('/albumdetails/:userId/:subfolder', async (req, res) => {
       res.json(result.resources);
 
       console.log("encodedPath", encodedPath);
-      console.log("decodedPath", decodedPath);
       console.log("PATHLOG", folderPath);
       
   } catch (error) {
@@ -821,23 +821,22 @@ app.get("/users/:userId/familymembers", async (req, res) => {
 });
 
 //Get one user
-app.get("/getUser/:userId", async (req, res) => {
-  const { userId } = req.params;
+app.get('/getUser/:id', async (req, res) => {
+  const { id } = req.params;
   try {
-    const user = await User.findById(userId)
-      .populate("mid")
-      .populate("fid")
-      .populate("pid")
-      .populate("familyId");
+    const user = await User.findById(id);
     if (!user) {
-      return res.status(404).send("User not found");
+      return res.status(404).send('User not found');
     }
-    res.status(200).json(user);
+    res.json(user);
   } catch (error) {
-    res.status.send(error.message);
+    console.error('Error fetching user:', error);
+    if (error instanceof mongoose.Error.ConnectionError) {
+      return res.status(503).send('Database connection error');
+    }
+    res.status(500).send('Internal Server Error');
   }
 });
-
 //Update user
 app.put("/updateUser/:userId", async (req, res) => {
   const { userId } = req.params;
@@ -937,7 +936,16 @@ app.patch("/familymembers/:id", async (req, res) => {
   }
 });
 
-app.get("/fulltree", (req, res) => {
+function updateDbJson(data) {
+  fs.writeFile("./db.json", JSON.stringify(data), "utf8", (err) => {
+    if (err) {
+      console.error(err);
+    }
+  });
+}
+
+
+app.get("/jsontree", (req, res) => {
   fs.readFile("./db.json", "utf8", (err, data) => {
     if (err) {
       console.error(err);
@@ -949,7 +957,8 @@ app.get("/fulltree", (req, res) => {
   });
 });
 
-app.post("/fulltree", (req, res) => {
+app.post("/jsontree", (req, res) => {
+  
   fs.readFile("./db.json", "utf8", (err, data) => {
     if (err) {
       console.error(err);
@@ -975,5 +984,91 @@ app.post("/fulltree", (req, res) => {
         }
       });
     }
+  });
+});
+
+
+
+
+app.get("/familytree/:userId", async (req, res) => {
+  const userId = req.params.userId;
+  try {
+    const nodes = await Node.find({ userId: userId });
+    if (!nodes) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    const familyTrees = nodes.map(node => node.familyTree);
+    
+    // Write data to db.json
+    fs.writeFile('db.json', JSON.stringify(familyTrees), (err) => {
+      if (err) {
+        return res.status(500).json({ message: "Error writing to file" });
+      }
+      res.json(familyTrees);
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+
+
+
+app.post('/writetree', async (req, res) => {
+  const { userId, familyTree } = req.body;
+
+  if (!userId || !familyTree) {
+    return res.status(400).send('Missing userId or familyTree data');
+  }
+
+  try {
+    // Create a new Node document
+    const newNode = new Node({
+      userId: userId,
+      familyTree: familyTree
+    });
+
+    // Save the document
+    const savedNode = await newNode.save();
+
+    // Send back the created document
+    res.status(201).json(savedNode);
+  } catch (error) {
+    console.error('Failed to save the family tree:', error);
+    res.status(500).send('Internal server error');
+  }
+});
+
+
+
+app.post('/writeToFile', (req, res) => {
+  const newData = req.body;
+  let familyTreeData = [];
+  familyTreeData.push(newData);
+
+  // Trim the outermost brackets by taking the first element of the first (and only) element of the familyTreeData
+  const trimmedData = JSON.stringify(familyTreeData[0][0]);
+
+  fs.writeFile('db.json', trimmedData, (err) => {
+    if (err) {
+      console.error('Error writing to file:', err);
+      return res.status(500).json({ message: 'Error writing to file' });
+    }
+    res.json({ message: 'Data written to file successfully' });
+  });
+});
+
+
+
+
+// Endpoint to delete content from db.json
+app.delete('/deleteFileContent', (req, res) => {
+  let familyTreeData = "";
+  fs.writeFile('./db.json', '', (err) => {
+    if (err) {
+      console.error('Error deleting file content:', err);
+      return res.status(500).json({ message: 'Error deleting file content' });
+    }
+    res.json({ message: 'File content deleted successfully' });
   });
 });

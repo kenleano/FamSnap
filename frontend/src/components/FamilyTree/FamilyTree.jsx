@@ -5,6 +5,8 @@ import Tree from "./Tree";
 import SideProfile from "./SideProfile";
 import AddFamilyMemberForm from "./AddFamilyMember";
 import TestTree from "./TestTree";
+import TestTree2 from "./TestTree2";
+import MongoTree from "./MongoTree";
 // import TreeTrial from "./treesample";
 
 const FamilyTree = () => {
@@ -14,7 +16,8 @@ const FamilyTree = () => {
       <h2>{user.lastName} Family Tree</h2>
       {/* <AddFamilyMemberForm /> */}
       <div className="">
-      <TestTree />
+        <MongoTree />
+      {/* <TestTree2 /> */}
       </div>
       {/* <SideProfile /> */}
     </div>

@@ -4,6 +4,7 @@ import AllPhotos from "./AllPhotos";
 import Albums from "./Albums";
 import People from "./People";
 import PhotosNav from "./PhotosNavigation";
+import AlbumDetails from "./AlbumDetails";
 import { useAuth } from "../AuthContext";
 
 const Photos = () => {
@@ -33,6 +34,8 @@ const Photos = () => {
             <Route path="/" element={<AllPhotos />} />
             <Route path="people" element={<People />} />
             <Route path="albums" element={<Albums />} />
+            <Route path="/albums/:albumPath" element={<AlbumDetails />} />
+
           </Routes>
         </div>
       </div>
