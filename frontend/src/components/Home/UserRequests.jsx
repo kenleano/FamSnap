@@ -59,7 +59,7 @@ const UserRequests = () => {
           >
             <div className="p-6">
               <h3 className="font-bold text-lg mb-2">
-                Name: {request.userName}
+                Artist: {request.artistName}
               </h3>
               <ul className="mb-4">
                 <li>

@@ -11,19 +11,18 @@ export const getImages = async (nextCursor) => {
   return responseJson;
 };
 
-export const searchImages = async (searchValue, nextCursor) => {
+export const searchImages = async (searchValue, nextCursor, folderPath) => {
   const params = new URLSearchParams();
-  params.append(`expression`, searchValue);
-
+  params.append("expression", `folder:${folderPath} AND ${searchValue}`);
   if (nextCursor) {
     params.append("next_cursor", nextCursor);
   }
-
   const response = await fetch(`${API_URL}/search?${params}`);
   const responseJson = await response.json();
-
   return responseJson;
 };
+
+
 
 export const uploadImage = async (file) => {
   const formData = new FormData();
@@ -33,7 +32,7 @@ export const uploadImage = async (file) => {
     const response = await fetch(`${API_URL}/upload`, {
       method: "POST",
       body: formData,
-      // Note: Fetch API automatically sets the Content-Type to multipart/form-data with the correct boundary when using FormData
+
     });
 
     if (!response.ok) {

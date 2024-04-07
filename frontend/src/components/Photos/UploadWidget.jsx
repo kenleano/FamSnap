@@ -1,9 +1,12 @@
 import React from "react";
 import { useEffect, useRef } from "react";
-
+import {useAuth } from "../AuthContext";
 const UploadWidget = () => {
   const cloudinaryRef = useRef();
   const widgetRef = useRef();
+  const { user } = useAuth();
+
+  const userId = user.id;
 
   useEffect(() => {
     cloudinaryRef.current = window.cloudinary;
@@ -12,13 +15,12 @@ const UploadWidget = () => {
         cloudName: "dx4yz4grz",
         uploadPreset: "oqqyky8l",
         showAdvancedOptions: true,
+        folder: `user_${userId}`,
 
       },
       function (error, result) {
         if (result.event === "success") {
           window.location.reload();
-          //ADDS TAGS WHEN UPLOADED
-          // console.log("Tags:", result.info.categorization.aws_rek_tagging.data);
         }
         
       }

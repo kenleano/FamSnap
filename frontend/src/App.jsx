@@ -18,6 +18,7 @@ import Requests from "./components/Artist/Requests";
 import Contact from "./components/Restoration/Contact";
 import StripeContainer from "./components/Restoration/StripeContainer";
 import UserRequests from "./components/Home/UserRequests";
+import AlbumDetails from "./components/Photos/AlbumDetails";
 
 function App() {
   return (
@@ -39,6 +40,7 @@ function App() {
           <Route path="/userrequests" element={<UserRequests />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/payment" element={<StripeContainer />} />
+          <Route path="/album/:albumPath" element={<AlbumDetails />} />
           
         </Routes>
       </div>

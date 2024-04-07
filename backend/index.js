@@ -150,12 +150,36 @@ app.get("/photos", async (req, res) => {
   return res.send(response.data);
 });
 
-app.get("/albums", async (req, res) => {
-  const response = await axios.get(BASE_URL + "/folders", {
-    auth,
-  });
-  return res.send(response.data);
+app.get("/albums/:userId", async (req, res) => {
+  const userId = req.params.userId;
+  const folderPath = `user_${userId}`;
+
+  try {
+    const response = await axios.get(`${BASE_URL}/folders/${folderPath}`, {
+      auth,
+    });
+    res.send(response.data);
+  } catch (error) {
+    console.error("Error fetching albums:", error);
+    res.status(500).send({ error: "Failed to fetch albums" });
+  }
 });
+
+app.post("/albums/:userId", async (req, res) => {
+  const userId = req.params.userId;
+  const { albumName } = req.body;
+  const folderPath = `user_${userId}/${albumName}`;
+
+  try {
+    // Example using Cloudinary SDK to create a folder
+    const result = await cloudinary.api.create_folder(folderPath);
+    res.send({ success: true, message: "Album created successfully", data: result });
+  } catch (error) {
+    res.status(500).send({ success: false, message: "Failed to create album", error: error.message });
+  }
+});
+
+
 
 app.get("/search", async (req, res) => {
   const response = await axios.get(BASE_URL + "/resources/search", {
@@ -190,12 +214,13 @@ const addTagsToSingleAsset = async (tags, publicId) => {
     throw error; // Rethrow or handle error as needed
   }
 };
-
-app.post("/replaceTags", async (req, res) => {
+// Update the replaceTags endpoint to include the user's folder
+app.post("/replaceTags/:userId", async (req, res) => {
   const { tags, publicId } = req.body; // Expecting 'tags' and 'publicId' from the request body
+  const { userId } = req.params; // Extract the userId from the request parameters
 
   try {
-    const result = await replaceTags(tags, publicId);
+    const result = await replaceTags(userId, tags, publicId);
     res.json({ success: true, result });
   } catch (error) {
     console.error("Error replacing tags:", error);
@@ -203,9 +228,12 @@ app.post("/replaceTags", async (req, res) => {
   }
 });
 
-const replaceTags = async (tags, publicId) => {
+// Function to replace tags for an image under a user's folder
+const replaceTags = async (userId, tags, publicId) => {
   try {
-    const result = await cloudinary.uploader.replace_tag(tags, [publicId]);
+    // Construct the full publicId including the user's folder
+    const fullPublicId = `${publicId}`;
+    const result = await cloudinary.uploader.replace_tag(tags, [fullPublicId]);
     console.log(result);
     return result;
   } catch (error) {
@@ -215,9 +243,26 @@ const replaceTags = async (tags, publicId) => {
 };
 
 // Inside your routes or controller file
-app.get("/photos/:publicId", async (req, res) => {
+app.get("/photos/:userId", async (req, res) => {
   try {
-    const details = await getAssetDetails(req.params.publicId);
+    const userId = req.params.userId;
+    // Generate folder name based on user ID
+    const folderName = `user_${userId}`;
+    // Fetch images from the specified folder on Cloudinary
+    const response = await cloudinary.search
+      .expression(`folder:${folderName}`)
+      .execute();
+    res.json(response.resources);
+  } catch (error) {
+    console.error("Error fetching photos:", error);
+    res.status(500).json({ error: "Failed to fetch photos" });
+  }
+});
+``
+// Get photo details endpoint
+app.get("/photos/:userId/:publicId", async (req, res) => {
+  try {
+    const details = await getAssetDetails(req.params.userId, req.params.publicId);
     res.json(details);
   } catch (error) {
     console.error("Error fetching asset details:", error);
@@ -225,10 +270,11 @@ app.get("/photos/:publicId", async (req, res) => {
   }
 });
 
-const getAssetDetails = async (publicId) => {
+// Function to get details of an asset from Cloudinary
+const getAssetDetails = async (userId, publicId) => {
   try {
     // Fetch the details of the asset
-    const result = await cloudinary.api.resource(publicId);
+    const result = await cloudinary.api.resource(`${userId}/${publicId}`);
     console.log(result); // You can see all details of the asset here
     return result;
   } catch (error) {
@@ -236,10 +282,9 @@ const getAssetDetails = async (publicId) => {
     throw error;
   }
 };
-
-app.delete("/deletePhoto/:publicId", async (req, res) => {
+app.delete("/deletePhoto/:userId/:publicId", async (req, res) => {
   try {
-    const result = await deleteImage(req.params.publicId);
+    const result = await deleteImage(req.params.userId, req.params.publicId);
     res.json({ success: true, result });
   } catch (error) {
     console.error("Error deleting asset:", error);
@@ -247,9 +292,10 @@ app.delete("/deletePhoto/:publicId", async (req, res) => {
   }
 });
 
-const deleteImage = async (publicId) => {
+// Function to delete image from Cloudinary
+const deleteImage = async (userId, publicId) => {
   try {
-    const result = await cloudinary.uploader.destroy(publicId);
+    const result = await cloudinary.uploader.destroy(`${userId}/${publicId}`);
     console.log(result);
     return result;
   } catch (error) {
@@ -257,6 +303,7 @@ const deleteImage = async (publicId) => {
     throw error;
   }
 };
+
 
 // Replace 'your_public_id' with the actual public_id of the asset you want to fetch
 // getAssetDetails("your_public_id").then((asset) => {
