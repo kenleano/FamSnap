@@ -165,6 +165,55 @@ app.get("/albums/:userId", async (req, res) => {
   }
 });
 
+app.get('/albumdetails/:userId/:subfolder', async (req, res) => {
+  const { userId, subfolder } = req.params;
+  // Usually, you don't need to decode manually since Express does this automatically
+ 
+  const encodedPath = encodeURIComponent(subfolder);
+  const folderPath = `user_${userId}/${encodedPath}`;
+  try {
+      const result = await cloudinary.search
+          .expression(`folder:${folderPath}`)
+          .sort_by('public_id', 'desc')
+          .max_results(30)
+          .execute();
+
+      res.json(result.resources);
+
+      console.log("encodedPath", encodedPath);
+      console.log("decodedPath", decodedPath);
+      console.log("PATHLOG", folderPath);
+      
+  } catch (error) {
+      console.error("Error fetching images:", error);
+      res.status(500).send({ error: "Failed to fetch images" });
+  }
+});
+
+
+
+
+
+app.get('/albumdetails', async (req, res) => {
+  const { userId, subfolder } = req.query; // Use query parameters instead of URL path
+  const folderPath = `${userId}/${subfolder}`;
+
+  try {
+      const result = await cloudinary.search
+          .expression(`folder:${folderPath}`)
+          .sort_by('public_id', 'desc')
+          .max_results(30)
+          .execute();
+
+      res.json(result.resources);
+  } catch (error) {
+      console.error("Error fetching images:", error);
+      res.status(500).send({ error: "Failed to fetch images" });
+  }
+});
+
+
+
 app.post("/albums/:userId", async (req, res) => {
   const userId = req.params.userId;
   const { albumName } = req.body;

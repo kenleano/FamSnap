@@ -10,31 +10,32 @@ const CreateAlbum = () => {
   const [success, setSuccess] = useState(false);
 
   const handleCreateAlbum = async () => {
-    if (!albumName) {
-      setError("Album name cannot be empty");
-      return;
+    if (!albumName.trim()) {
+        setError("Album name cannot be empty");
+        return;
     }
+    const encodedAlbumName = encodeURIComponent(albumName.trim());
     setIsSubmitting(true);
     setError(null);
     setSuccess(false);
 
     try {
-      const response = await axios.post(`http://localhost:3000/albums/${user.id}`, {
-        albumName, // Send the album name and any other required data
-      });
+        const response = await axios.post(`http://localhost:3000/albums/${user.id}`, {
+            albumName: encodedAlbumName, // Send the encoded album name
+        });
 
-      if (response.status === 200) {
-        setSuccess(true);
-        setAlbumName(''); // Clear the input after successful creation
-      } else {
-        setError("Failed to create album");
-      }
+        if (response.status === 200) {
+            setSuccess(true);
+            setAlbumName(''); // Clear the input after successful creation
+        } else {
+            setError("Failed to create album");
+        }
     } catch (error) {
-      setError("Error creating album: " + (error.response?.data?.message || error.message));
+        setError("Error creating album: " + (error.response?.data?.message || error.message));
     } finally {
-      setIsSubmitting(false);
+        setIsSubmitting(false);
     }
-  };
+};
 
   return (
     <div className="create-album-container">
