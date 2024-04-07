@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import { useAuth } from "../AuthContext";
+
 
 const FamilyTreeComponent = () => {
   const [data, setData] = useState([]);
+  const { user } = useAuth();
+
+  const userID = user.id;
 
   useEffect(() => {
     // Fetching the family tree data from the server
@@ -39,18 +44,40 @@ const FamilyTreeComponent = () => {
         .then(response => response.json())
         .then(updatedData => {
           console.log("Updated data received:", updatedData);
+     
         })
         .catch(error => {
           console.error("Error updating node:", error);
         });
+        window.location.reload();
         // return false; to cancel the operation
       });
 
       family.load(data);
+      //updateFamilyTree(userId)
+      updateFamilyTree();
     }
   }, [data]); // This will re-run the effect when `data` changes
 
-  console.log("Data TREE (state):", data);
+
+  const updateFamilyTree = () => {
+    console.log(`Updating FamilyTree for userID: ${userID}`);
+    fetch(`http://localhost:3000/updateFamilyTree/${userID}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    })
+    .then(response => response.json())
+    .then(updatedData => {
+      console.log("Family tree updated successfully:", updatedData);
+      
+      // Optionally, you can update local state or perform other actions based on the response
+    })
+    .catch(error => {
+      console.error("Error updating family tree:", error);
+    });
+  };
 
   return (
     <div>

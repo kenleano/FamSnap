@@ -1,18 +1,1 @@
-[
-  {
-    "id": 1,
-    "name": "TEST",
-    "gender": "male",
-    "pids": [2],
-    "mid": null,
-    "fid": null
-  },
-  {
-    "id": 2,
-    "name": "TEST",
-    "gender": "female",
-    "pids": [1],
-    "mid": null,
-    "fid": null
-  }
-]
+[{"id":"1","name":"TEST","gender":"male","pids":["2"],"mid":null,"fid":null},{"id":"2","name":"TEST","gender":"female","pids":["1"],"mid":null,"fid":null},{"id":"_l9xn","name":"Sonny","gender":"male","pids":["_o80u"],"mid":"2","fid":"1"},{"id":"_o80u","name":"Wifey","gender":"female","pids":["_l9xn"]},{"id":"_we3r","name":"Test","gender":"male","pids":[],"mid":"_o80u","fid":"_l9xn"}]

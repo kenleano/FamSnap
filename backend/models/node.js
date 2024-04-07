@@ -4,12 +4,12 @@ const { Schema } = mongoose;
 
 // Define the Family Node Schema as a subdocument without its own _id.
 const familyNodeSchema = new Schema({
-  id: Number,
+  id: String,
   name: String,
   gender: String,
-  pids: [Number], // Partner IDs
-  mid: Number,    // Mother's ID
-  fid: Number     // Father's ID
+  pids: [String], // Partner IDs
+  mid: String,    // Mother's ID
+  fid: String     // Father's ID
 }, { _id: false }); // Correctly disabling _id for subdocuments
 
 // Define the Node Schema with _id enabled by default (remove _id: false for the main document schema)

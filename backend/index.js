@@ -1072,3 +1072,54 @@ app.delete('/deleteFileContent', (req, res) => {
     res.json({ message: 'File content deleted successfully' });
   });
 });
+
+
+
+app.post("/updateFamilyTree/:userId", async (req, res) => {
+  const userId = req.params.userId;
+
+  fs.readFile('db.json', 'utf8', async (err, data) => {
+    if (err) {
+      console.error('Error reading from file:', err);
+      return res.status(500).json({ message: 'Error reading from file' });
+    }
+
+    try {
+      // Assuming db.json contains an array of family tree data
+      const newFamilyTree = JSON.parse(data);
+
+      // Find the node for the specified userId and update it
+      const node = await Node.findOne({ userId: userId });
+      if (!node) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      // Update the node with new family tree data
+      node.familyTree = newFamilyTree;  // Set the new family tree
+      await node.save();  // Save the updated node
+
+      // Delete the contents of db.json
+      fs.writeFile('db.json', '', async (deleteErr) => {
+        if (deleteErr) {
+          console.error('Error deleting file content:', deleteErr);
+          return res.status(500).json({ message: 'Error deleting file content' });
+        }
+
+        // Optionally, write new data to db.json
+        // For example, to write the updated family tree back to the file:
+        const newData = JSON.stringify(node.familyTree);
+        fs.writeFile('db.json', newData, (writeErr) => {
+          if (writeErr) {
+            console.error('Error writing to file:', writeErr);
+            return res.status(500).json({ message: 'Error writing to file' });
+          }
+          res.json({ message: 'Family tree updated and file rewritten successfully' });
+        });
+      });
+    } catch (updateError) {
+      console.error('Error updating the family tree:', updateError);
+      res.status(500).json({ message: updateError.message });
+    }
+  });
+});
+
