@@ -151,25 +151,33 @@ app.get("/photos", async (req, res) => {
   return res.send(response.data);
 });
 
-app.get("/albums/:userId", async (req, res) => {
-  const userId = req.params.userId;
-  const folderPath = `user_${userId}`;
-
+app.get('/albums/:userId', async (req, res) => {
   try {
-    const response = await axios.get(`${BASE_URL}/folders/${folderPath}`, {
-      auth,
-    });
-    res.send(response.data);
+      const userId = req.params.userId;
+      // Fetch albums from your storage, example with Cloudinary:
+      const albums = await cloudinary.api.sub_folders(`user_${userId}`);
+
+      // Optionally, fetch the first image for each album
+      for (let folder of albums.folders) {
+          const images = await cloudinary.api.resources({
+              type: 'upload',
+              prefix: folder.path, // Assuming images are stored by album path
+              max_results: 1
+          });
+          folder.firstImageUrl = images.resources[0]?.secure_url || null;
+      }
+
+      res.send({ folders: albums.folders });
   } catch (error) {
-    console.error("Error fetching albums:", error);
-    res.status(500).send({ error: "Failed to fetch albums" });
+      console.error("Error fetching albums:", error);
+      res.status(500).send("Failed to fetch albums");
   }
 });
+
 
 app.get('/albumdetails/:userId/:subfolder', async (req, res) => {
   const { userId, subfolder } = req.params;
   // Usually, you don't need to decode manually since Express does this automatically
- 
   const encodedPath = encodeURIComponent(subfolder);
   const folderPath = `user_${userId}/${encodedPath}`;
   try {
@@ -295,11 +303,20 @@ const replaceTags = async (userId, tags, publicId) => {
 app.get("/photos/:userId", async (req, res) => {
   try {
     const userId = req.params.userId;
-    // Generate folder name based on user ID
-    const folderName = `user_${userId}`;
-    // Fetch images from the specified folder on Cloudinary
+    // Ensure that userId is provided
+    if (!userId) {
+      return res.status(400).json({ error: 'No userId provided' });
+    }
+    const folderName = `${userId}`;
+
+    // Use wildcard to include subfolders
+    const searchExpression = `folder=user_${folderName}/*` || `folder=${folderName}`;
+
+    // Fetch images from the specified folder and all subfolders
     const response = await cloudinary.search
-      .expression(`folder:${folderName}`)
+      .expression(searchExpression)
+      .sort_by('public_id', 'desc')  // Optional: sorts results by public_id in descending order
+      .max_results(100)             // Optional: limits the number of results
       .execute();
     res.json(response.resources);
   } catch (error) {
@@ -307,17 +324,21 @@ app.get("/photos/:userId", async (req, res) => {
     res.status(500).json({ error: "Failed to fetch photos" });
   }
 });
-``
+
+
+
 // Get photo details endpoint
-app.get("/photos/:userId/:publicId", async (req, res) => {
+app.get("/photodetail/:userId/:publicId(*)", async (req, res) => {
   try {
-    const details = await getAssetDetails(req.params.userId, req.params.publicId);
+    const { userId, publicId } = req.params;
+    const details = await getAssetDetails(userId, publicId);
     res.json(details);
   } catch (error) {
     console.error("Error fetching asset details:", error);
     res.status(500).send(error.message);
   }
 });
+
 
 // Function to get details of an asset from Cloudinary
 const getAssetDetails = async (userId, publicId) => {
@@ -331,6 +352,8 @@ const getAssetDetails = async (userId, publicId) => {
     throw error;
   }
 };
+
+
 app.delete("/deletePhoto/:userId/:publicId", async (req, res) => {
   try {
     const result = await deleteImage(req.params.userId, req.params.publicId);
@@ -886,42 +909,6 @@ app.delete("/familymembers/:id", async (req, res) => {
 
 //FAMILY MEMBERS CRUD
 
-// Create a new family member
-app.post("/addfamily", async (req, res) => {
-  const {
-    firstName,
-    lastName,
-    email,
-    password,
-    birthday,
-    familyId,
-    mid,
-    fid,
-    pid,
-  } = req.body;
-
-  try {
-    const newUser = new User({
-      firstName,
-      lastName,
-      email, //
-      birthday,
-      familyId,
-      mid,
-      fid,
-      pid,
-    });
-    await newUser.save(); // Save the new user document to the database
-    res
-      .status(201)
-      .send({ message: "User added successfully", userId: newUser._id });
-  } catch (error) {
-    console.error("Error adding user:", error);
-    res
-      .status(500)
-      .send({ message: "Error adding user", error: error.message });
-  }
-});
 
 // Get a single family member by id
 app.get("/familymembers/:id", async (req, res) => {
@@ -1119,4 +1106,19 @@ app.post("/jsontree", (req, res) => {
       });
     }
   });
+});
+
+app.delete('/deleteAlbum/:userId/:albumPath', async (req, res) => {
+  try {
+    const { userId, albumPath } = req.params;
+    const folderPath = decodeURIComponent(albumPath);  // Assuming the folder path is encoded
+
+    // Cloudinary API to delete a folder
+    const result = await cloudinary.api.delete_folder(`user_${userId}/${folderPath}`);
+
+    res.send({ success: true, message: 'Album deleted successfully', result });
+  } catch (error) {
+    console.error('Error deleting album:', error);
+    res.status(500).send({ success: false, message: error.message });
+  }
 });

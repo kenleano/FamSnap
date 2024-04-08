@@ -87,33 +87,34 @@ const saveTags = async () => {
   }, []);
 
   const handleLoadMoreButtonClick = async () => {
-    const responseJson = await getImages(nextCursor);
+    const responseJson = await getImages(nextCursor, `user_${user.id}`);  // Assuming user-specific folder path
     setImageList((currentImageList) => [
       ...currentImageList,
       ...responseJson.resources,
     ]);
-    setNextCursor(responseJson.next_cursor);
+    setNextCursor(responseJson.next_cursor);  // Make sure to update the next cursor from the API response
   };
+  
 
   const handleFormSubmit = async (event) => {
     event.preventDefault();
-    const responseJson = await searchImages(searchValue, nextCursor);
+    const responseJson = await searchImages(searchValue, nextCursor, `user_${user.id}`);
     setImageList(responseJson.resources);
-    setNextCursor(responseJson.next_cursor);
   };
 
   const resetForm = async () => {
-    const responseJson = await getImages();
-    setImageList(responseJson.resources);
-    setNextCursor(responseJson.next_cursor);
+
     setSearchValue("");
+    window.location.reload();
+
   };
 
   const handleImageClick = async (image) => {
+    {console.log("active Image!!!", image);  }
     setActiveImage(null); // Clear previous active image first
     try {
       const response = await fetch(
-        `http://localhost:3000/photos/${image.public_id}`
+        `http://localhost:3000/photodetail/${image.public_id}`
       );
       const details = await response.json();
       setActiveImage(details); // Set active image with all details
@@ -166,7 +167,9 @@ const saveTags = async () => {
   console.log("activeImage", activeImage);
   return (
     <>
-      <UploadWidget />
+    <br/>
+       <div className="text-center">
+      <UploadWidget /></div>
       <br />
       <form
         onSubmit={handleFormSubmit}
@@ -220,8 +223,9 @@ const saveTags = async () => {
           </button>
         )}
       </div>
-
+     
       {activeImage && (
+        
         <div className="fixed inset-0 bg-gray-900 bg-opacity-50 z-50 overflow-y-auto">
           <div className="flex items-center justify-center  px-4 text-center">
             <div className="bg-white rounded-lg shadow-xl transform transition-all my-8 max-w-4xl w-full">
@@ -268,7 +272,7 @@ const saveTags = async () => {
                         list="family-list"
                       />
                       <datalist id="family-list">
-                        {familyMembers[0].map((member, index) => (
+                        {familyMembers.map((member, index) => (
                           <option
                             key={index}
                             value={member.name}

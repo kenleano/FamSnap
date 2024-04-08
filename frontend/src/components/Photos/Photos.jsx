@@ -6,6 +6,7 @@ import People from "./People";
 import PhotosNav from "./PhotosNavigation";
 import AlbumDetails from "./AlbumDetails";
 import { useAuth } from "../AuthContext";
+import PeopleDetails from "./PeopleDetails";
 
 const Photos = () => {
   const { user } = useAuth();
@@ -35,6 +36,8 @@ const Photos = () => {
             <Route path="people" element={<People />} />
             <Route path="albums" element={<Albums />} />
             <Route path="/albums/:albumPath" element={<AlbumDetails />} />
+            <Route path="/people/:personName" element={<PeopleDetails />} />
+
 
           </Routes>
         </div>

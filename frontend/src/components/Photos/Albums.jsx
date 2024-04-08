@@ -33,10 +33,14 @@ const AlbumViewer = () => {
     navigate(`/photos/albums/${encodeURIComponent(albumPath)}`);
   };
 
+
+
   return (
     <div className="container mx-auto px-4 py-8">
+      <div className="text-center font-bold mb-4">
       <CreateAlbum />
-      <div className="albums grid gap-4 grid-cols-[repeat(auto-fill,minmax(200px,1fr))]">
+      </div>
+      <div className="grid justify-center content-center gap-5 grid-flow-col">
         {albums.map((album) => (
           <div
             key={album.name} // Use the name as key, assuming it's unique enough for this use-case

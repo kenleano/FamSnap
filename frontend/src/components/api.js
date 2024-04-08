@@ -1,10 +1,23 @@
 const API_URL = "http://localhost:3000";
 
-export const getImages = async (nextCursor) => {
+// export const getImages = async (nextCursor) => {
+//   const params = new URLSearchParams();
+//   if (nextCursor) {
+//     params.append;
+//     "next_cursor", nextCursor;
+//   }
+//   const response = await fetch(`${API_URL}/photos?${params}`);
+//   const responseJson = await response.json();
+//   return responseJson;
+// };
+
+export const getImages = async (nextCursor, folderPath) => {
   const params = new URLSearchParams();
   if (nextCursor) {
-    params.append;
-    "next_cursor", nextCursor;
+    params.append("next_cursor", nextCursor);
+  }
+  if (folderPath) {
+    params.append("folder", folderPath);
   }
   const response = await fetch(`${API_URL}/photos?${params}`);
   const responseJson = await response.json();
@@ -13,7 +26,11 @@ export const getImages = async (nextCursor) => {
 
 export const searchImages = async (searchValue, nextCursor, folderPath) => {
   const params = new URLSearchParams();
-  params.append("expression", `folder:${folderPath} AND ${searchValue}`);
+  if (folderPath) {
+    params.append("expression", `folder:${folderPath} AND ${searchValue}`);
+  } else {
+    params.append("expression", searchValue);
+  }
   if (nextCursor) {
     params.append("next_cursor", nextCursor);
   }
