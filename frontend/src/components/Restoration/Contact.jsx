@@ -69,7 +69,7 @@ if (!formData.beforeImage || !formData.serviceName) {
         formData
       );
       console.log("Request sent:", response.data);
-      navigate("/profile");
+      navigate("/userrequests");
     } catch (error) {
       console.error("Error sending request:", error);
       console.log(formData);

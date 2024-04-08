@@ -24,8 +24,9 @@ const NavBarLanding = () => {
           >
             {/* SVG path */}
           </svg>
-          <span className="ml-2 text-xl font-bold text-gray-800 hover:text-blue-700">
-            FamSnap {status}
+          <img src="https://cdn-icons-png.freepik.com/512/1504/1504357.png" alt="FamSnap" className="h-6 w-auto hover:text-blue-400 duration-200" />
+          <span className="ml-2 text-xl font-bold  text-blue-500 hover:text-blue-700">
+            FamSnap
           </span>
         </Link>
       </div>

@@ -44,7 +44,7 @@ const AlbumViewer = () => {
         {albums.map((album) => (
           <div
             key={album.name} // Use the name as key, assuming it's unique enough for this use-case
-            className="album-card p-4 bg-white rounded hover:shadow-lg transition-shadow"
+            className="flex flex-col justify-between p-4 bg-white rounded border border-gray-300 hover:shadow-lg transition duration-150 ease-in-out cursor-pointer"
             onClick={() => handleClick(album.name)} // Send the unencoded name
           >
             <div className="album-image">

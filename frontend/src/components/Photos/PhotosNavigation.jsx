@@ -3,31 +3,10 @@ import { Link, useMatch, useResolvedPath } from "react-router-dom";
 
 const PhotosNav = () => {
   return (
-    <nav className="bg-white shadow flex items-center justify-between px-4 py-3 rounded-lg">
-      <NavItem to="/photos">
-        <img
-          src="https://uxwing.com/wp-content/themes/uxwing/download/video-photography-multimedia/photo-gallery-icon.png"
-          alt="All Photos Icon"
-          className="inline-block w-7 h-auto mr-2"
-        />
-        All Photos
-      </NavItem>
-      <NavItem to="/photos/people">
-        <img
-          src="https://uxwing.com/wp-content/themes/uxwing/download/peoples-avatars/man-and-woman-user-icon.png"
-          alt="People Icon"
-          className="inline-block w-7 h-auto mr-2"
-        />
-        People
-      </NavItem>
-      <NavItem to="/photos/albums">
-        <img
-          src="https://uxwing.com/wp-content/themes/uxwing/download/education-school/read-book-icon.png"
-          alt="Albums Icon"
-          className="inline-block w-7 h-auto mr-2"
-        />
-        Albums
-      </NavItem>
+    <nav className="bg-blue-500 shadow-md flex items-center justify-between px-5 py-3 rounded-full">
+      <NavItem to="/photos">All Photos</NavItem>
+      <NavItem to="/photos/people">People</NavItem>
+      <NavItem to="/photos/albums">Albums</NavItem>
     </nav>
   );
 };
@@ -39,8 +18,8 @@ const NavItem = ({ to, children }) => {
   return (
     <Link
       to={to}
-      className={`text-gray-800 hover:text-blue-700 hover:bg-blue-50 py-2 px-4 transition duration-300 ease-in-out rounded-lg ${
-        isActive ? "bg-blue-100" : ""
+      className={`text-white hover:text-blue-200 hover:bg-blue-600 py-1 px-3 transition duration-300 ease-in-out rounded-full ${
+        isActive ? "bg-blue-700" : ""
       }`}
     >
       {children}

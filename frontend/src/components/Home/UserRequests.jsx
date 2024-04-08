@@ -55,7 +55,7 @@ const UserRequests = () => {
         {requests.map((request, index) => (
           <div
             key={index}
-            className="bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 ease-in-out"
+            className="bg-white rounded-lg border-2 overflow-hidden "
           >
             <div className="p-6">
               <h3 className="font-bold text-lg mb-2">
