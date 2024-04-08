@@ -20,8 +20,11 @@ const People = () => {
         return;
       }
       try {
-        const response = await axios.get(`http://localhost:3000/users/${user.id}/familymembers`);
+        const response = await axios.get(
+          `http://localhost:3000/familytree/${user.id}`
+        );
         setFamilyMembers(response.data);
+        console.log("Response Data:", response.data);
       } catch (error) {
         console.error("Failed to load family members", error);
         setError("Failed to load family members");
@@ -39,7 +42,7 @@ const People = () => {
       const responseJson = await searchImages(name, nextCursor, folderPath);
       setImages(responseJson.resources);
       setPersonPhotos(name); // Store the person's name clicked
-      console.log("Params images:", name,nextCursor, folderPath );
+      console.log("Params images:", name, nextCursor, folderPath);
     } catch (error) {
       setError("Failed to fetch images");
     } finally {
@@ -47,6 +50,7 @@ const People = () => {
     }
   };
 
+  console.log("Family members:", familyMembers);
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
@@ -55,21 +59,17 @@ const People = () => {
         ) : error ? (
           <div className="text-center text-red-500">{error}</div>
         ) : (
-          familyMembers.map((family) => (
-            
+          familyMembers[0].map((family) => (
             <div
-              key={family._id}
-              onClick={() => handleClick(family.firstName)}
+              key={family.id}
+              onClick={() => handleClick(family.name)}
               className="album-card flex flex-col justify-between p-4 bg-white rounded hover:shadow-lg transition duration-150 ease-in-out h-full cursor-pointer"
             >
-                <p>{user.id}</p>
-
               <div className="album-image mt-auto overflow-hidden rounded">
-            
                 {family.firstImageUrl ? (
                   <img
                     src={family.firstImageUrl}
-                    alt={`Cover of ${family.firstName}`}
+                    alt={`Cover of ${family.name}`}
                     className="w-full h-48 object-cover rounded"
                   />
                 ) : (
@@ -81,9 +81,7 @@ const People = () => {
                 )}
               </div>
               <div className="album-details">
-                <div className="album-name mt-2 text-center">
-                  {family.firstName} {family.lastName}
-                </div>
+                <div className="album-name mt-2 text-center">{family.name}</div>
               </div>
             </div>
           ))

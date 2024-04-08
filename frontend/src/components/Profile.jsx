@@ -92,7 +92,21 @@ const ProfileEdit = () => {
   };
   const handleLogout = () => {
     logout();
+    deleteFileContent();
     navigate("/login"); // Navigate to the login page after logout
+  };
+
+
+  const deleteFileContent = async () => {
+    try {
+      // Delete content of db.json
+      await fetch("http://localhost:3000/deleteFileContent", {
+        method: "DELETE",
+      });
+    } catch (error) {
+      console.error("Error deleting file content:", error);
+      // Handle error appropriately
+    }
   };
   return (
     <div className="min-h-screen w-full bg-blue-50 px-16 py-8">

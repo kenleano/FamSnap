@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from "../AuthContext";
+import axios from 'axios';
 
 
 const FamilyTreeComponent = () => {
   const [data, setData] = useState([]);
   const { user } = useAuth();
 
-  const userID = user.id;
+  const userId = user.id;
 
   useEffect(() => {
     // Fetching the family tree data from the server
@@ -55,29 +56,23 @@ const FamilyTreeComponent = () => {
 
       family.load(data);
       //updateFamilyTree(userId)
-      updateFamilyTree();
+ 
     }
   }, [data]); // This will re-run the effect when `data` changes
 
 
-  const updateFamilyTree = () => {
-    console.log(`Updating FamilyTree for userID: ${userID}`);
-    fetch(`http://localhost:3000/updateFamilyTree/${userID}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
+  useEffect(() => {
+    const updateFamilyTree = async () => {
+      try {
+        const response = await axios.post(`http://localhost:3000/updateFamilyTree/${userId}`);
+        console.log('Family tree updated successfully:', response.data);
+      } catch (error) {
+        console.error('Error updating family tree:', error);
       }
-    })
-    .then(response => response.json())
-    .then(updatedData => {
-      console.log("Family tree updated successfully:", updatedData);
-      
-      // Optionally, you can update local state or perform other actions based on the response
-    })
-    .catch(error => {
-      console.error("Error updating family tree:", error);
-    });
-  };
+    };
+
+    updateFamilyTree();
+  }, [userId]);
 
   return (
     <div>

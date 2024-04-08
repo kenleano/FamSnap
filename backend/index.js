@@ -748,7 +748,6 @@ async function createFolderForUser(userId) {
 app.post("/register", async (req, res) => {
   const { child, mother, father } = req.body;
   try {
-    await Promise.all([createFolderForUser(childRecord._id)]);
     // Function to create a user
     const createUser = async (userData, familyId = null, isChild = false) => {
       const { email, password, ...rest } = userData;
@@ -766,44 +765,62 @@ app.post("/register", async (req, res) => {
       await user.save();
       return user;
     };
-    // Step 1: Create the child record first but without setting familyId yet
-    const childRecord = await createUser(child, null, true);
-    // Use the child's ID as the familyId for all family members, including the child itself
-    const familyId = childRecord._id;
-    // Step 2: Create mother and father records with the child's ID as their familyId
-    const motherRecord = await createUser(mother, familyId);
-    const fatherRecord = await createUser(father, familyId);
-    // Step 3: Link mother and father as partners
-    await User.findByIdAndUpdate(motherRecord._id, {
-      $set: { pid: fatherRecord._id, familyId: familyId },
-    });
-    // Step 4: Update the child record to set its familyId to its own _id
-    //Update the record to have motherID and fatherID as mid and fid
-    await User.findByIdAndUpdate(fatherRecord._id, {
-      $set: { pid: motherRecord._id, familyId: familyId },
-    });
-    await User.findByIdAndUpdate(childRecord._id, {
-      $set: {
-        mid: motherRecord._id,
-        fid: fatherRecord._id,
-        familyId: familyId,
-      },
-    });
-    // Respond with success and the IDs of the created records
-    res.status(201).send({
-      message: "Family registered successfully",
-      ids: {
-        childId: childRecord._id.toString(),
-        motherId: motherRecord._id.toString(),
-        fatherId: fatherRecord._id.toString(),
-        familyId: familyId.toString(), // Send familyId as string for convenience
-      },
+
+    await Promise.all([
+      createUser(child, null, true), // Create the child record first but without setting familyId yet
+    ]).then(([childRecord]) => {
+      // Use the child's ID as the familyId for all family members, including the child itself
+      const familyId = childRecord._id;
+
+      // Create mother and father records with the child's ID as their familyId
+      Promise.all([
+        createUser(mother, familyId),
+        createUser(father, familyId)
+      ]).then(([motherRecord, fatherRecord]) => {
+        // Link mother and father as partners in Node collection
+        const parentNode = new Node({
+          userId: childRecord._id,
+          familyTree: [
+            { id: motherRecord._id.toString(), name: `${mother.firstName} ${mother.lastName}`, gender: 'female', pids: [fatherRecord._id.toString()], mid: null, fid: null },
+            { id: fatherRecord._id.toString(), name: `${father.firstName} ${father.lastName}`, gender: 'male', pids: [motherRecord._id.toString()], mid: null, fid: null },
+            { id: childRecord._id.toString(), name: `${child.firstName} ${child.lastName}`, gender: child.gender, pids: [], mid: motherRecord._id.toString(), fid: fatherRecord._id.toString() }
+          ]
+        });
+        parentNode.save();
+
+        // Update the child record to set its familyId to its own _id
+        User.findByIdAndUpdate(childRecord._id, {
+          $set: {
+            mid: motherRecord._id,
+            fid: fatherRecord._id,
+            familyId: familyId,
+          },
+        }).then(() => {
+          // Respond with success and the IDs of the created records
+          res.status(201).send({
+            message: "Family registered successfully",
+            ids: {
+              childId: childRecord._id.toString(),
+              motherId: motherRecord._id.toString(),
+              fatherId: fatherRecord._id.toString(),
+              familyId: familyId.toString(), // Send familyId as string for convenience
+            },
+          });
+        }).catch(err => {
+          console.error(err);
+          res.status(500).send({ message: "Error updating child record", error: err.message });
+        });
+      }).catch(err => {
+        console.error(err);
+        res.status(500).send({ message: "Error creating mother and father records", error: err.message });
+      });
+    }).catch(err => {
+      console.error(err);
+      res.status(500).send({ message: "Error creating child record", error: err.message });
     });
   } catch (err) {
     console.error(err);
-    res
-      .status(500)
-      .send({ message: "Error registering family", error: err.message });
+    res.status(500).send({ message: "Error registering family", error: err.message });
   }
 });
 
@@ -945,6 +962,123 @@ function updateDbJson(data) {
 }
 
 
+
+
+
+app.get("/familytree/:userId", async (req, res) => {
+  const userId = req.params.userId;
+  try {
+    // Find the node with the specified userId
+    const node = await Node.findOne({ userId });
+
+    if (!node) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Extract the familyTree from the node
+    const familyTree = node.familyTree;
+
+    // Send the familyTree in the response
+    res.status(200).json(familyTree);
+  } catch (err) {
+    // Handle errors
+    res.status(500).json({ message: err.message });
+  }
+});
+
+
+
+app.post('/writetree', async (req, res) => {
+  const { userId, familyTree } = req.body;
+
+  if (!userId || !familyTree) {
+    return res.status(400).send('Missing userId or familyTree data');
+  }
+
+  try {
+    // Create a new Node document
+    const newNode = new Node({
+      userId: userId,
+      familyTree: familyTree
+    });
+
+    // Save the document
+    const savedNode = await newNode.save();
+
+    // Send back the created document
+    res.status(201).json(savedNode);
+  } catch (error) {
+    console.error('Failed to save the family tree:', error);
+    res.status(500).send('Internal server error');
+  }
+});
+
+
+
+
+app.post('/writeToFile', (req, res) => {
+  const newData = req.body;
+  let familyTreeData = [];
+  familyTreeData.push(newData);
+
+  // Trim the outermost brackets by taking the first element of the first (and only) element of the familyTreeData
+  const trimmedData = JSON.stringify(familyTreeData[0]);
+
+  fs.writeFile('db.json', trimmedData, (err) => {
+    if (err) {
+      console.error('Error writing to file:', err);
+      return res.status(500).json({ message: 'Error writing to file' });
+    }
+    res.json({ message: 'Data written to file successfully' });
+  });
+});
+
+
+
+// Endpoint to delete content from db.json
+app.delete('/deleteFileContent', (req, res) => {
+  let familyTreeData = "";
+  fs.writeFile('./db.json', '', (err) => {
+    if (err) {
+      console.error('Error deleting file content:', err);
+      return res.status(500).json({ message: 'Error deleting file content' });
+    }
+    res.json({ message: 'File content deleted successfully' });
+  });
+});
+
+
+app.post("/updateFamilyTree/:userId", async (req, res) => {
+  const userId = req.params.userId;
+
+  fs.readFile('db.json', 'utf8', async (err, data) => {
+    if (err) {
+      console.error('Error reading from file:', err);
+      return res.status(500).json({ message: 'Error reading from file' });
+    }
+  
+    try {
+      // Assuming db.json contains an array of family tree data
+      let newFamilyTree = JSON.parse(data);
+  
+      // Find the node for the specified userId and update it
+      const node = await Node.findOne({ userId: userId });
+      if (!node) {
+        return res.status(404).json({ message: "User not found" });
+      }
+  
+      // Update the node with new family tree data
+      node.familyTree = newFamilyTree;  // Set the new family tree without the extra nesting
+      await node.save();  // Save the updated node
+  
+    } catch (updateError) {
+      console.error('Error updating the family tree:', updateError);
+      res.status(500).json({ message: updateError.message });
+    }
+  });
+});
+
+
 app.get("/jsontree", (req, res) => {
   fs.readFile("./db.json", "utf8", (err, data) => {
     if (err) {
@@ -986,140 +1120,3 @@ app.post("/jsontree", (req, res) => {
     }
   });
 });
-
-
-
-
-app.get("/familytree/:userId", async (req, res) => {
-  const userId = req.params.userId;
-  try {
-    const nodes = await Node.find({ userId: userId });
-    if (!nodes) {
-      return res.status(404).json({ message: "User not found" });
-    }
-    const familyTrees = nodes.map(node => node.familyTree);
-    
-    // Write data to db.json
-    fs.writeFile('db.json', JSON.stringify(familyTrees), (err) => {
-      if (err) {
-        return res.status(500).json({ message: "Error writing to file" });
-      }
-      res.json(familyTrees);
-    });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
-
-
-
-
-app.post('/writetree', async (req, res) => {
-  const { userId, familyTree } = req.body;
-
-  if (!userId || !familyTree) {
-    return res.status(400).send('Missing userId or familyTree data');
-  }
-
-  try {
-    // Create a new Node document
-    const newNode = new Node({
-      userId: userId,
-      familyTree: familyTree
-    });
-
-    // Save the document
-    const savedNode = await newNode.save();
-
-    // Send back the created document
-    res.status(201).json(savedNode);
-  } catch (error) {
-    console.error('Failed to save the family tree:', error);
-    res.status(500).send('Internal server error');
-  }
-});
-
-
-
-app.post('/writeToFile', (req, res) => {
-  const newData = req.body;
-  let familyTreeData = [];
-  familyTreeData.push(newData);
-
-  // Trim the outermost brackets by taking the first element of the first (and only) element of the familyTreeData
-  const trimmedData = JSON.stringify(familyTreeData[0][0]);
-
-  fs.writeFile('db.json', trimmedData, (err) => {
-    if (err) {
-      console.error('Error writing to file:', err);
-      return res.status(500).json({ message: 'Error writing to file' });
-    }
-    res.json({ message: 'Data written to file successfully' });
-  });
-});
-
-
-
-
-// Endpoint to delete content from db.json
-app.delete('/deleteFileContent', (req, res) => {
-  let familyTreeData = "";
-  fs.writeFile('./db.json', '', (err) => {
-    if (err) {
-      console.error('Error deleting file content:', err);
-      return res.status(500).json({ message: 'Error deleting file content' });
-    }
-    res.json({ message: 'File content deleted successfully' });
-  });
-});
-
-
-
-app.post("/updateFamilyTree/:userId", async (req, res) => {
-  const userId = req.params.userId;
-
-  fs.readFile('db.json', 'utf8', async (err, data) => {
-    if (err) {
-      console.error('Error reading from file:', err);
-      return res.status(500).json({ message: 'Error reading from file' });
-    }
-
-    try {
-      // Assuming db.json contains an array of family tree data
-      const newFamilyTree = JSON.parse(data);
-
-      // Find the node for the specified userId and update it
-      const node = await Node.findOne({ userId: userId });
-      if (!node) {
-        return res.status(404).json({ message: "User not found" });
-      }
-
-      // Update the node with new family tree data
-      node.familyTree = newFamilyTree;  // Set the new family tree
-      await node.save();  // Save the updated node
-
-      // Delete the contents of db.json
-      fs.writeFile('db.json', '', async (deleteErr) => {
-        if (deleteErr) {
-          console.error('Error deleting file content:', deleteErr);
-          return res.status(500).json({ message: 'Error deleting file content' });
-        }
-
-        // Optionally, write new data to db.json
-        // For example, to write the updated family tree back to the file:
-        const newData = JSON.stringify(node.familyTree);
-        fs.writeFile('db.json', newData, (writeErr) => {
-          if (writeErr) {
-            console.error('Error writing to file:', writeErr);
-            return res.status(500).json({ message: 'Error writing to file' });
-          }
-          res.json({ message: 'Family tree updated and file rewritten successfully' });
-        });
-      });
-    } catch (updateError) {
-      console.error('Error updating the family tree:', updateError);
-      res.status(500).json({ message: updateError.message });
-    }
-  });
-});
-

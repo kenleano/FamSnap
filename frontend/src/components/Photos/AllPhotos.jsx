@@ -16,7 +16,7 @@ const AllPhotos = () => {
     const fetchFamilyMembers = async () => {
       try {
         const response = await fetch(
-          `http://localhost:3000/users/${user.id}/familymembers`
+          `http://localhost:3000/familytree/${user.id}`
         );
         if (!response.ok) {
           throw new Error("Could not fetch family members");
@@ -268,10 +268,10 @@ const saveTags = async () => {
                         list="family-list"
                       />
                       <datalist id="family-list">
-                        {familyMembers.map((member, index) => (
+                        {familyMembers[0].map((member, index) => (
                           <option
                             key={index}
-                            value={`${member.firstName} ${member.lastName}`}
+                            value={member.name}
                           />
                         ))}
                       </datalist>

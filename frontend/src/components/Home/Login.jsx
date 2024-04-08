@@ -37,14 +37,16 @@ const Login = () => {
   };
 
   
+  
   const writeToFile = async (userId) => {
     try {
       const response = await fetch("http://localhost:3000/familytree/" + userId);
-      console.log("response", response);
+     
       if (!response.ok) {
         throw new Error("Failed to fetch family tree data");
       }
       const familyTreeData = await response.json();
+      console.log("RESPONSE FAMILY TREE", familyTreeData);
       // Write data to db.json
       await fetch("http://localhost:3000/writeToFile", {
         method: "POST",
