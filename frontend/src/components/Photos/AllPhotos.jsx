@@ -41,32 +41,34 @@ const AllPhotos = () => {
     }
   }, [activeImage]);
 
-const saveTags = async () => {
-  console.log("Saving tags:", editableTags);
-  // Here you would call your API to update the tags for the activeImage
-  try {
-    const response = await fetch(`http://localhost:3000/replaceTags/${user.id}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json", // Correct header for JSON content type
-      },
-      body: JSON.stringify({
-        // Convert the JavaScript object to a JSON string
-        tags: editableTags,
-        publicId: activeImage.public_id,
-      }),
-    });
-    console.log("tags", editableTags);
-    console.log("activeImage TEST", activeImage.public_id);
-    if (!response.ok) throw new Error("Failed to add tags");
-    // const result = await response.json();
-    alert("Tags Updated!"); // Display success message
-    // Optionally, clear the form or redirect the user
-  } catch (error) {
-    alert(error.message); // Display error message
-  }
-};
-
+  const saveTags = async () => {
+    console.log("Saving tags:", editableTags);
+    // Here you would call your API to update the tags for the activeImage
+    try {
+      const response = await fetch(
+        `http://localhost:3000/replaceTags/${user.id}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json", // Correct header for JSON content type
+          },
+          body: JSON.stringify({
+            // Convert the JavaScript object to a JSON string
+            tags: editableTags,
+            publicId: activeImage.public_id,
+          }),
+        }
+      );
+      console.log("tags", editableTags);
+      console.log("activeImage TEST", activeImage.public_id);
+      if (!response.ok) throw new Error("Failed to add tags");
+      // const result = await response.json();
+      alert("Tags Updated!"); // Display success message
+      // Optionally, clear the form or redirect the user
+    } catch (error) {
+      alert(error.message); // Display error message
+    }
+  };
 
   useEffect(() => {
     // Update fetchData function to fetch images for a specific user
@@ -87,30 +89,33 @@ const saveTags = async () => {
   }, []);
 
   const handleLoadMoreButtonClick = async () => {
-    const responseJson = await getImages(nextCursor, `user_${user.id}`);  // Assuming user-specific folder path
+    const responseJson = await getImages(nextCursor, `user_${user.id}`); // Assuming user-specific folder path
     setImageList((currentImageList) => [
       ...currentImageList,
       ...responseJson.resources,
     ]);
-    setNextCursor(responseJson.next_cursor);  // Make sure to update the next cursor from the API response
+    setNextCursor(responseJson.next_cursor); // Make sure to update the next cursor from the API response
   };
-  
 
   const handleFormSubmit = async (event) => {
     event.preventDefault();
-    const responseJson = await searchImages(searchValue, nextCursor, `user_${user.id}`);
+    const responseJson = await searchImages(
+      searchValue,
+      nextCursor,
+      `user_${user.id}`
+    );
     setImageList(responseJson.resources);
   };
 
   const resetForm = async () => {
-
     setSearchValue("");
     window.location.reload();
-
   };
 
   const handleImageClick = async (image) => {
-    {console.log("active Image!!!", image);  }
+    {
+      console.log("active Image!!!", image);
+    }
     setActiveImage(null); // Clear previous active image first
     try {
       const response = await fetch(
@@ -167,9 +172,10 @@ const saveTags = async () => {
   console.log("activeImage", activeImage);
   return (
     <>
-    <br/>
-       <div className="text-center">
-      <UploadWidget /></div>
+      <br />
+      <div className="text-center">
+        <UploadWidget />
+      </div>
       <br />
       <form
         onSubmit={handleFormSubmit}
@@ -223,9 +229,8 @@ const saveTags = async () => {
           </button>
         )}
       </div>
-     
+
       {activeImage && (
-        
         <div className="fixed inset-0 bg-gray-900 bg-opacity-50 z-50 overflow-y-auto">
           <div className="flex items-center justify-center  px-4 text-center">
             <div className="bg-white rounded-lg shadow-xl transform transition-all my-8 max-w-4xl w-full">
@@ -273,10 +278,7 @@ const saveTags = async () => {
                       />
                       <datalist id="family-list">
                         {familyMembers.map((member, index) => (
-                          <option
-                            key={index}
-                            value={member.name}
-                          />
+                          <option key={index} value={member.name} />
                         ))}
                       </datalist>
                     </div>

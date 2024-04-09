@@ -48,9 +48,6 @@ const People = () => {
             onClick={() => handleClick(family.name)}
             className="flex flex-col justify-between p-4 bg-white rounded border border-gray-300 hover:shadow-lg transition duration-150 ease-in-out cursor-pointer"
           >
-          
-       
-          
               <div className="overflow-hidden rounded">
                 <img
                   src={family.firstImageUrl || 'https://t3.ftcdn.net/jpg/01/18/01/98/360_F_118019822_6CKXP6rXmVhDOzbXZlLqEM2ya4HhYzSV.jpg'}

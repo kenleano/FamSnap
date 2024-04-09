@@ -1,8 +1,7 @@
-// import React, { useState } from "react";
+
 import PropTypes from "prop-types";
 
 const ImageUpload = ({ setImageUrl }) => {
-  // const [imageUrl, setImageUrl] = useState("");
 
   const openUploadWidget = () => {
     const widgetOptions = {
@@ -18,23 +17,18 @@ const ImageUpload = ({ setImageUrl }) => {
         "instagram",
         "google_drive",
       ],
-      // This option is not needed for the widget itself but might be used for custom implementations
-      // form: "#upload-form",
-      // fieldName: "image",
       multiple: false,
-      cropping: false, // You can add any other widget options you need
+      cropping: false, 
     };
-
     window.cloudinary.openUploadWidget(widgetOptions, (error, result) => {
       if (!error && result && result.event === "success") {
         console.log("Upload successful:", result.info);
-        setImageUrl(result.info.secure_url); // Update parent state
+        setImageUrl(result.info.secure_url); 
       } else if (error) {
         console.log("Upload error:", error);
       }
     });
   };
-
   return (
     <div>
       <button
@@ -46,7 +40,6 @@ const ImageUpload = ({ setImageUrl }) => {
     </div>
   );
 };
-
 ImageUpload.propTypes = {
   setImageUrl: PropTypes.func.isRequired,
 };

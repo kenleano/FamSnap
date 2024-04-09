@@ -8,8 +8,6 @@ import { ClipLoader } from "react-spinners";
 import ImageUpload from "./ImageUploader";
 import { useNavigate } from "react-router-dom";
 
-
-
 function ColorizeImage({ setImageUrl, imageUrl }) {
   const navigate = useNavigate();
   const defaultImageUrl =
@@ -96,7 +94,7 @@ function ColorizeImage({ setImageUrl, imageUrl }) {
       {" "}
       {/* Added overflow-x-hidden */}
       <div className="max-w-4xl min-w-[300px] mx-auto">
-      <div className="flex justify-center my-4">
+        <div className="flex justify-center my-4">
           <ImageUpload setImageUrl={setImageUrl} />
         </div>
         {isSubmitting && (
@@ -120,7 +118,7 @@ function ColorizeImage({ setImageUrl, imageUrl }) {
         ) : (
           <div className="flex justify-center items-center">
             <div className="max-w-xl min-w-[800px] min-h-[1000px]">
-            {restoredImages !== defaultRestoredImageUrl && (
+              {restoredImages !== defaultRestoredImageUrl && (
                 <div className="flex justify-center mt-4 my-4">
                   {" "}
                   {/* This wrapper ensures horizontal centering */}
@@ -164,6 +162,5 @@ ColorizeImage.propTypes = {
 ColorizeImage.propTypes = {
   setImageUrl: PropTypes.string.isRequired,
 };
-
 
 export default ColorizeImage;

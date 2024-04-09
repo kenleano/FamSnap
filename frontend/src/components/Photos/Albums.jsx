@@ -33,38 +33,37 @@ const AlbumViewer = () => {
     navigate(`/photos/albums/${encodeURIComponent(albumPath)}`);
   };
 
-
-
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="text-center font-bold mb-4">
-      <CreateAlbum />
-      </div>
-      <div className="grid justify-center content-center gap-5 grid-flow-col">
-        {albums.map((album) => (
-          <div
-            key={album.name} // Use the name as key, assuming it's unique enough for this use-case
-            className="flex flex-col justify-between p-4 bg-white rounded border border-gray-300 hover:shadow-lg transition duration-150 ease-in-out cursor-pointer"
-            onClick={() => handleClick(album.name)} // Send the unencoded name
-          >
-            <div className="album-image">
-              {album.firstImageUrl ? (
-                <img
-                  src={album.firstImageUrl}
-                  alt={`Cover of ${album.name}`} // Display decoded name
-                  className="w-full h-48 object-cover rounded"
-                />
-              ) : (
-                <div className="w-full h-48 bg-gray-200 rounded flex items-center justify-center">
-                  No Image
-                </div>
-              )}
+   <div className="container mx-auto px-4 py-8">
+  <div className="text-center font-bold mb-4">
+    <CreateAlbum />
+  </div>
+  <div className="grid grid-cols-3 gap-4">
+    {albums.map((album) => (
+      <div
+        key={album.name}
+        className="flex flex-col items-center justify-between p-4 bg-white rounded border border-gray-300 hover:shadow-lg transition duration-150 ease-in-out cursor-pointer"
+        onClick={() => handleClick(album.name)}
+      >
+        <div className="w-full h-48 flex items-center justify-center overflow-hidden">
+          {album.firstImageUrl ? (
+            <img
+              src={album.firstImageUrl}
+              alt={`Cover of ${album.name}`}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className="w-full h-full bg-gray-200 rounded flex items-center justify-center">
+              No Image
             </div>
-            <div className="album-name mt-2 text-center">{album.name}</div> 
-          </div>
-        ))}
+          )}
+        </div>
+        <div className="mt-2 text-center">{album.name}</div>
       </div>
-    </div>
+    ))}
+  </div>
+</div>
+
   );
 };
 
