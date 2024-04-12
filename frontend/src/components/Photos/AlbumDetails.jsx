@@ -58,7 +58,8 @@ const AlbumDetails = () => {
   const deletePhoto = async (publicId) => {
     if (window.confirm("Are you sure you want to delete this photo?")) {
       try {
-        await axios.delete(`http://localhost:3000/deletePhoto/${publicId}`);
+        const encodedAlbumPath = encodeURIComponent(publicId);
+        await axios.delete(`http://localhost:3000/deletePhoto/${user.id}/${encodedAlbumPath}`);
         setImages(images.filter((img) => img.public_id !== publicId));
         alert("Photo deleted successfully");
       } catch (error) {

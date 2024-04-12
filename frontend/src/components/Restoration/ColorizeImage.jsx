@@ -7,6 +7,7 @@ import PropTypes from "prop-types";
 import { ClipLoader } from "react-spinners";
 import ImageUpload from "./ImageUploader";
 import { useNavigate } from "react-router-dom";
+import Watermark from "@uiw/react-watermark";
 
 function ColorizeImage({ setImageUrl, imageUrl }) {
   const navigate = useNavigate();
@@ -91,8 +92,6 @@ function ColorizeImage({ setImageUrl, imageUrl }) {
 
   return (
     <div className="flex justify-center py-5 overflow-x-hidden">
-      {" "}
-      {/* Added overflow-x-hidden */}
       <div className="max-w-4xl min-w-[300px] mx-auto">
         <div className="flex justify-center my-4">
           <ImageUpload setImageUrl={setImageUrl} />
@@ -102,8 +101,7 @@ function ColorizeImage({ setImageUrl, imageUrl }) {
             <ClipLoader color="#0000ff" size={75} />
           </div>
         )}
-        {imageUrl !== defaultImageUrl &&
-        restoredImages === defaultRestoredImageUrl ? (
+        {imageUrl !== defaultImageUrl && restoredImages === defaultRestoredImageUrl ? (
           <div>
             <form onSubmit={handleSubmit} className="text-center mb-8">
               <button
@@ -120,8 +118,6 @@ function ColorizeImage({ setImageUrl, imageUrl }) {
             <div className="max-w-xl min-w-[800px] min-h-[1000px]">
               {restoredImages !== defaultRestoredImageUrl && (
                 <div className="flex justify-center mt-4 my-4">
-                  {" "}
-                  {/* This wrapper ensures horizontal centering */}
                   <button
                     type="button"
                     onClick={handlePurchaseClick}
@@ -140,11 +136,32 @@ function ColorizeImage({ setImageUrl, imageUrl }) {
                   />
                 }
                 itemTwo={
-                  <ReactCompareSliderImage
-                    src={restoredImages || defaultRestoredImageUrl}
-                    alt="Restored Image"
-                    className="shadow-lg rounded-lg"
-                  />
+                  restoredImages !== defaultRestoredImageUrl ? (
+                    <Watermark
+                      content="FamSnap ©"
+                      rotate={20}
+                      gapX={5}
+                      width={100}
+                      gapY={80}
+                      height={5}
+                      fontSize={12}
+                      fontColor="rgb(255 255 255 / 25%)"
+                      style={{ background: "#fff" }}
+                    >
+                      <div className="absolute inset-0 bg-transparent z-10"></div>
+                      <ReactCompareSliderImage
+                        src={restoredImages || defaultRestoredImageUrl}
+                        alt="Restored Image"
+                        className="shadow-lg rounded-lg"
+                      />
+                    </Watermark>
+                  ) : (
+                    <ReactCompareSliderImage
+                      src={restoredImages || defaultRestoredImageUrl}
+                      alt="Restored Image"
+                      className="shadow-lg rounded-lg"
+                    />
+                  )
                 }
               />
             </div>
@@ -153,6 +170,7 @@ function ColorizeImage({ setImageUrl, imageUrl }) {
       </div>
     </div>
   );
+  
 }
 
 ColorizeImage.propTypes = {

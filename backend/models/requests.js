@@ -13,7 +13,8 @@ const requestSchema = new Schema({
     servicePrice: { type: Number, required: false },
     date: { type: Date, required: true },
     status: { type: String, required: false, default: "Pending" },
-    message: { type: String, required: false }
+    message: { type: String, required: false },
+    
     });
 
 const Request = mongoose.model("Request", requestSchema);

@@ -16,6 +16,7 @@ const Contact = () => {
 
   const [formData, setFormData] = useState({
     userId: user.id,
+    artistEmail: artist.email,
     userName: user.firstName + " " + user.lastName,
     artistName: artist.firstName + " " + artist.lastName,
     artistId: artist._id,
@@ -82,8 +83,7 @@ if (!formData.beforeImage || !formData.serviceName) {
       <div className="text-red-500 text-sm mb-2">{errorMessage}</div>
       <form
         onSubmit={handleSubmit}
-        className="space-y-6 bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
-      >
+        className="space-y-6 bg-white border rounded px-8 pt-6 pb-8 mb-4">
         <h2 className="block text-gray-700 text-xl font-bold mb-2">
           Request a Service
         </h2>

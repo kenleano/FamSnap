@@ -9,22 +9,15 @@ import Iframe from "react-iframe";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 const Home = () => {
-  const defaultImageUrl =
-    "https://replicate.delivery/pbxt/JgdLVwRXXl4oaGqmF4Wdl7vOapnTlay32dE7B3UNgxSwylvQ/Audrey_Hepburn.jpg";
-  const defaultRestoredImageUrl =
-    "https://replicate.delivery/pbxt/NlSQp8BS4WLxL13eERn20OJzbMYfKpDx4usqAkywlgZY2ZtRA/tmpwg3l1z7wAudrey_Hepburn.png";
+  const defaultImageUrl = "https://i.imgur.com/oPDS26Y.png";
+  const defaultRestoredImageUrl = "https://i.imgur.com/fg9eb7w.jpg";
 
   const familyTreeUrl =
     "https://code.balkan.app/Result/family-tree-js/royal-family-tree";
 
-  const space = " ";
-  
-
   return (
-    <div className="h-screen flex justify-center items-center px-4">
-  
-     
-  <Carousel
+    <div className="flex justify-center h-dvh">
+      <Carousel
         showArrows={true}
         autoPlay={true}
         infiniteLoop={true}
@@ -81,24 +74,22 @@ const Home = () => {
                 justifyContent: "center",
                 alignItems: "center",
               }}
-              
             >
               <FaChevronLeft />
             </button>
           )
         }
-        className="w-full h-full overflow-hidden"
       >
         {/* Slide 1: Before and After Image Slider */}
-        <div className="flex flex-col items-center justify-center h-full">
+        <div className="flex flex-col items-center justify-center h-dvh">
           <h2 className="text-2xl font-semibold text-gray-900">
             Restore Your Old Photos
           </h2>
-          <p className="text-sm text-gray-600 my-4">
+          <p className="text-lg text-gray-600 mb-6">
             Upload your old photos and see them come to life with our advanced
-            AI restoration tool.
+            AI restoration tool or hire our Professional Artists!
           </p>
-          <div className="h-3/4">
+          <div className="h-auto w-1/2">
             <ReactCompareSlider
               itemOne={
                 <ReactCompareSliderImage
@@ -116,13 +107,13 @@ const Home = () => {
           </div>
         </div>
         {/* Slide 2: Family Tree Visualization */}
-        <div className="flex flex-col items-center justify-center h-full">
+        <div className="flex flex-col items-center justify-center h-dvh">
           <h2 className="text-2xl font-semibold text-gray-900">
             Explore Your Heritage
           </h2>
-          <p className="text-sm text-gray-600 my-4">
-            Visualize your family history with our interactive family tree tool.
-            Click{" "}
+          <p className="text-lg text-gray-600 mb-6">
+            Visualize your family history with our interactive family tree tool
+            powered by BalkanJS. Click{" "}
             <a
               href={familyTreeUrl}
               target="_blank"
@@ -134,15 +125,7 @@ const Home = () => {
             to see a full-scale demo.
           </p>
           <div className="h-3/4 w-full">
-            <Iframe
-              url={familyTreeUrl}
-              className="border-none"
-              display="initial"
-              position="relative"
-              allowFullScreen
-              height="100%"
-              width="100%"
-            />
+            <Iframe url={familyTreeUrl} height="100%" width="100%" />
           </div>
         </div>
 

@@ -6,11 +6,26 @@ import {
   ReactCompareSlider,
   ReactCompareSliderImage,
 } from "react-compare-slider";
-
+import Watermark from "@uiw/react-watermark";
+import { useNavigate } from "react-router-dom";
 
 const UserRequests = () => {
   const { user } = useAuth();
   const [requests, setRequests] = useState([]);
+  const [artistEmail, setArtistEmail] = useState(""); // State to store artist's email
+  const navigate = useNavigate();
+
+  //Fetch Artist Details
+  const getArtistEmail = async (artistId) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/getArtist/${artistId}`
+      );
+      setArtistEmail(response.data.email); // Set artist's email in state
+    } catch (error) {
+      console.error("Failed to fetch artist details:", error);
+    }
+  };
 
   useEffect(() => {
     axios
@@ -40,6 +55,11 @@ const UserRequests = () => {
       .catch((error) => {
         console.error("There was an error updating the request:", error);
       });
+  };
+
+  const handlePurchaseClick = (amount, afterImage, requestId) => {
+    // Navigate to /payment and pass imageUrl as state
+    navigate("/payRequest", { state: { amount, afterImage, requestId } });
   };
 
   const handleUploadSuccess = (url, index) => {
@@ -73,19 +93,34 @@ const UserRequests = () => {
                   <strong>Price:</strong> ${request.servicePrice}
                 </li>
                 <li>
-                  <strong>Status:</strong>
-                  <select
-                    value={request.status}
-                    onChange={(e) => handleStatusChange(index, e.target.value)}
-                    className="ml-2 border border-gray-300 rounded px-2 py-1"
-                  >
-                    <option value="Pending">Pending</option>
-                    <option value="Completed">Completed</option>
-                    <option value="Cancelled">Cancelled</option>
-                  </select>
+                  {(request.status === "Pending" ||
+                    request.status === "Cancelled") && (
+                    <>
+                      <strong>Status:</strong>
+                      <select
+                        value={request.status}
+                        onChange={(e) =>
+                          handleStatusChange(index, e.target.value)
+                        }
+                        className="ml-2 border border-gray-300 rounded px-2 py-1"
+                      >
+                        <option value="Pending">Pending</option>
+                        <option value="Cancelled">Cancelled</option>
+                      </select>
+                    </>
+                  )}
+
+                  {(request.status === "Delivered" ||
+                    request.status === "Paid") && (
+                    <>
+                      <strong>Status:</strong>
+                      <span> {request.status}</span>
+                    </>
+                  )}
                 </li>
               </ul>
-              {request.status == "Pending" &&  (
+              {(request.status === "Pending" ||
+                request.status === "Cancelled") && (
                 <div className="mb-4">
                   <strong>Before Image:</strong>
                   <img
@@ -94,11 +129,13 @@ const UserRequests = () => {
                     className="w-full h-64 object-cover rounded-lg"
                   />
                   <div className="mt-2">
-                  <RequestUpload onUploadSuccess={(url) => handleUploadSuccess(url, index)} />
+                    <RequestUpload
+                      onUploadSuccess={(url) => handleUploadSuccess(url, index)}
+                    />
                   </div>
                 </div>
               )}
-              {request.status == "Completed" &&  (
+              {(request.status == "Delivered" || request.status == "Paid") && (
                 <div className="mb-4">
                   <strong>Before & After Image:</strong>
                   <ReactCompareSlider
@@ -110,35 +147,76 @@ const UserRequests = () => {
                       />
                     }
                     itemTwo={
-                      <ReactCompareSliderImage
-                        src={request.afterImage}
-                        alt="After Restoration"
-                        className="w-full h-64 object-cover rounded-lg"
-                      />
+                      <Watermark
+                        content="FamSnap ©"
+                        rotate={20}
+                        gapX={5}
+                        width={100}
+                        gapY={80}
+                        height={5}
+                        fontSize={12}
+                        fontColor="rgb(255 255 255 / 25%)"
+                        style={{ background: "#fff" }}
+                      >
+                        <div className="absolute inset-0 bg-transparent z-10"></div>
+                        <ReactCompareSliderImage
+                          src={request.afterImage}
+                          alt="After Restoration"
+                          className="w-full h-64 object-cover rounded-lg"
+                        />
+                      </Watermark>
                     }
                   />
-                     <a
-                    href={request.afterImage}
-                    download="BeforeImage.jpg"
-                    className="inline-block mt-2"
-                  >
-                    <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out">
-                      Download Image
-                    </button>
-                  </a>
+                  {request.status == "Paid" && (
+                    <a
+                      href={request.afterImage}
+                      download="BeforeImage.jpg"
+                      className="inline-block mt-2"
+                    >
+                      <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out">
+                        Download Image
+                      </button>
+                    </a>
+                  )}
                 </div>
               )}
-               <button
-                onClick={() => saveChanges(request, index)}
-                className=" bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out"
-              >
-                Save Changes
-              </button>
-              {request.message && (
-                <p className="text-gray-700">{request.message}</p>
+              {(request.status === "Pending" ||
+                request.status === "Cancelled") && (
+                <button
+                  onClick={() => saveChanges(request, index)}
+                  className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out"
+                >
+                  Save Changes
+                </button>
               )}
-           
-          
+              {request.status !== "Paid" && request.status === "Delivered" && (
+                <>
+                  <button
+                    onClick={() => {
+                      const subject = "Regarding Your Service";
+                      const body = "Hello, I would like to discuss further details about the service.";
+                      const mailtoLink = `mailto:${artistEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+                      window.open(mailtoLink);
+                    }}
+                    className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out"
+                  >
+                    Email Artist 
+                  </button>
+                  <button
+                    onClick={() =>
+                      handlePurchaseClick(
+                        request.servicePrice,
+                        request.afterImage,
+                        request._id
+                      )
+                    }
+                    className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 mx-4 rounded transition duration-300 ease-in-out"
+                  >
+                    Pay $ {request.servicePrice}
+                  </button>
+                </>
+              )}
+              
             </div>
           </div>
         ))}

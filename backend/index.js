@@ -13,6 +13,7 @@ import multer from "multer";
 import { v2 as cloudinary } from "cloudinary";
 import Request from "./models/requests.js";
 import Node from "./models/node.js";
+import Stripe from 'stripe';
 
 // This should be at the very top of your main file
 
@@ -571,6 +572,8 @@ app.delete("/deleteService/:artistId/:serviceId", async (req, res) => {
   }
 });
 
+
+
 app.get("/getServices/:artistId", async (req, res) => {
   const { artistId } = req.params;
   try {
@@ -679,6 +682,7 @@ app.post("/requestService", async (req, res) => {
       beforeImage,
       afterImage,
       date,
+      message,
       status,
     } = request;
 
@@ -700,6 +704,7 @@ app.post("/requestService", async (req, res) => {
         servicePrice,
         beforeImage,
         afterImage,
+        message,
         date,
         status,
       });
@@ -1122,3 +1127,103 @@ app.delete('/deleteAlbum/:userId/:albumPath', async (req, res) => {
     res.status(500).send({ success: false, message: error.message });
   }
 });
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+
+app.post('/process_payment', async (req, res) => {
+  const { paymentMethodId, total } = req.body; // total should be in cents
+  const returnUrl = 'https://localhost:3000/download-image';  // Replace with your actual return URL
+
+  try {
+      const paymentIntent = await stripe.paymentIntents.create({
+          amount: total,
+          currency: 'usd',
+          payment_method: paymentMethodId,
+          confirmation_method: 'automatic',
+          confirm: true,
+          return_url: returnUrl,  // Include this to specify where to redirect after payment
+      });
+
+      if (paymentIntent.status === 'succeeded') {
+          res.json({ success: true, downloadToken: "your-secure-token-or-url" });
+      } else {
+          res.status(400).json({ success: false, message: "Payment failed" });
+      }
+  } catch (error) {
+      console.error("Stripe error:", error);
+      res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+});
+
+
+app.post("/addBankInfo", async (req, res) => {
+  const { userId, bankInfo } = req.body;
+  try {
+    // Assuming you have a 'User' model and you want to add bank info to it
+    const artist = await Artist.findById(userId);
+
+    if (!artist) {
+      return res.status(404).send("User not found");
+    }
+
+    // Add bank info to user's payment details
+    artist.paymentDetails.push({
+      bankName: bankInfo.bankName,
+      accountNumber: bankInfo.accountNumber,
+      routingNumber: bankInfo.routingNumber,
+      accountType: bankInfo.accountType,
+      accountHolderName: bankInfo.accountHolderName,
+      paymentMethod: "Bank Transfer", // Assuming it's bank transfer
+    });
+
+    await artist.save();
+
+    res.status(200).send("Bank info added successfully");
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
+
+app.get("/getBankInfo/:artistId", async (req, res) => {
+  const { artistId } = req.params;
+  try {
+    const artist = await Artist.findById(artistId);
+
+    if (!artist) {
+      return res.status(404).send("Artist not found");
+    }
+
+    const bankInfo = artist.paymentDetails.map(payment => ({
+      _id: payment._id,
+      bankName: payment.bankName,
+      accountNumber: payment.accountNumber,
+      routingNumber: payment.routingNumber,
+      accountType: payment.accountType,
+      accountHolderName: payment.accountHolderName
+    }));
+
+    res.status(200).json(bankInfo);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
+
+app.delete("/deleteBankInfo/:artistId/:paymentId", async (req, res) => {
+  const { artistId, paymentId } = req.params;
+  try {
+    const artist = await Artist.findById(artistId);
+
+    if (!artist) {
+      return res.status(404).send("Artist not found");
+    }
+
+    artist.paymentDetails.pull({ _id: paymentId });
+    await artist.save();
+
+    res.status(200).send("Bank info deleted successfully");
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
+
+

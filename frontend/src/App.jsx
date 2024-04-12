@@ -18,6 +18,8 @@ import Requests from "./components/Artist/Requests";
 import Contact from "./components/Restoration/Contact";
 import StripeContainer from "./components/Restoration/StripeContainer";
 import UserRequests from "./components/Home/UserRequests";
+import DownloadImage from "./components/Restoration/DownloadImage";
+import PayRequestContainer from "./components/Home/PayRequestContainer";
 
 
 function App() {
@@ -40,6 +42,8 @@ function App() {
           <Route path="/userrequests" element={<UserRequests />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/payment" element={<StripeContainer />} />
+          <Route path="/download-image" element={<DownloadImage />} />
+          <Route path="/payRequest" element={<PayRequestContainer />} />
 
           
         </Routes>

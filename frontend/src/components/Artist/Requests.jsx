@@ -7,7 +7,6 @@ import {
   ReactCompareSliderImage,
 } from "react-compare-slider";
 
-
 const Requests = () => {
   const { user } = useAuth();
   const [requests, setRequests] = useState([]);
@@ -55,13 +54,13 @@ const Requests = () => {
         {requests.map((request, index) => (
           <div
             key={index}
-            className="bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 ease-in-out"
+            className="bg-white rounded-lg overflow-hidden border hover:shadow-xl transition-shadow duration-300 ease-in-out"
           >
             <div className="p-6">
               <h3 className="font-bold text-lg mb-2">
                 Name: {request.userName}
               </h3>
-              <ul className="mb-4">
+              <ul className="mb-6">
                 <li>
                   <strong>Date:</strong>{" "}
                   {new Date(request.date).toLocaleDateString()}
@@ -74,18 +73,30 @@ const Requests = () => {
                 </li>
                 <li>
                   <strong>Status:</strong>
-                  <select
-                    value={request.status}
-                    onChange={(e) => handleStatusChange(index, e.target.value)}
-                    className="ml-2 border border-gray-300 rounded px-2 py-1"
-                  >
-                    <option value="Pending">Pending</option>
-                    <option value="Completed">Completed</option>
-                    <option value="Cancelled">Cancelled</option>
-                  </select>
+                  {request.status != "Paid" && (
+                    <select
+                      value={request.status}
+                      onChange={(e) =>
+                        handleStatusChange(index, e.target.value)
+                      }
+                      className="ml-2 border border-gray-300 rounded px-2 py-1"
+                    >
+                      <option value="Pending">Pending</option>
+                      <option value="Delivered">Delivered</option>
+                      <option value="Cancelled">Cancelled</option>
+                    </select>
+                  )}
+
+                  {request.status == "Paid" && (
+         <span className={request.status === "Paid" ? "text-green-600 font-bold" : ""}> {request.status}</span>
+
+                  )}
+                </li>
+                <li>
+                  <strong>Message:</strong> {request.message}
                 </li>
               </ul>
-              {!request.afterImage &&  (
+              {!request.afterImage && (
                 <div className="mb-4">
                   <strong>Before Image:</strong>
                   <img
@@ -125,16 +136,21 @@ const Requests = () => {
                   />
                 </div>
               )}
-              <RequestUpload onUploadSuccess={(url) => handleUploadSuccess(url, index)} />
-              {request.message && (
-                <p className="text-gray-700">{request.message}</p>
+              {request.status != "Paid"  && (
+                <>
+                  <RequestUpload
+                    onUploadSuccess={(url) => handleUploadSuccess(url, index)}
+                  />
+
+                  <button
+                    onClick={() => saveChanges(request, index)}
+                    className="mt-2 mx-2  bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out"
+                  >
+                    Save Changes
+                  </button>
+                </>
               )}
-              <button
-                onClick={() => saveChanges(request, index)}
-                className="mt-2 mx-2  bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out"
-              >
-                Save Changes
-              </button>
+              
             </div>
           </div>
         ))}

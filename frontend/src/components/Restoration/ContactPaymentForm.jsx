@@ -3,7 +3,7 @@ import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import { useNavigate , useLocation} from "react-router-dom"; // Import useNavigate instead of useHistory
 import Watermark from "@uiw/react-watermark";
 
-const PaymentForm = () => {
+const ContactPaymentForm = () => {
   const stripe = useStripe();
   const elements = useElements();
   const navigate = useNavigate(); // Create a navigate function
@@ -167,4 +167,4 @@ const PaymentForm = () => {
   );
 };
 
-export default PaymentForm;
+export default ContactPaymentForm;
