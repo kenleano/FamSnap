@@ -51,14 +51,14 @@ const FamilyTreeComponent = () => {
           console.error("Error updating node:", error);
         });
         window.location.reload();
-        // return false; to cancel the operation
+     
       });
 
       family.load(data);
       //updateFamilyTree(userId)
  
     }
-  }, [data]); // This will re-run the effect when `data` changes
+  }, [data]); 
 
 
   useEffect(() => {

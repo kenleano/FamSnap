@@ -1,177 +1,192 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
+import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
+import { useNavigate , useLocation} from "react-router-dom"; // Import useNavigate instead of useHistory
+import Watermark from "@uiw/react-watermark";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../AuthContext";
-import { CardNumberElement, CardExpiryElement, CardCvcElement, useStripe, useElements } from "@stripe/react-stripe-js";
 
-const AddBankInfo = () => {
-  const { user } = useAuth();
+const PaymentForm = () => {
   const stripe = useStripe();
   const elements = useElements();
-  const navigate = useNavigate();
-  const [isVisible, setIsVisible] = useState(false);
-  const toggleVisibility = () => setIsVisible(!isVisible);
+  const navigate = useNavigate(); // Create a navigate function
+  const [email, setEmail] = useState("");
+  const [cardholderName, setCardholderName] = useState("");
+  const [billingAddress, setBillingAddress] = useState("");
+  const total = 1.99; // Set the total amount to 1.99
+  const location = useLocation();
 
-  const [formData, setFormData] = useState({
-    bankName: "",
-    accountHolderName: "",
-    accountNumber: "",
-    routingNumber: "",
-    accountType: "",
-  });
+  // amount, afterImage, requestId 
+  const {amount, afterImage, requestId} = location.state || {}; // Destructure amount, afterImage, requestId from location.state
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
-  };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
+  const handleSubmit = async (event) => {
+    event.preventDefault();
     if (!stripe || !elements) {
-      console.error("Stripe has not loaded yet!");
+      console.log("Stripe has not loaded yet!");
       return;
     }
 
-    const bankToken = await stripe.createToken({
-      bank_account: {
-        country: "US",
-        currency: "usd",
-        account_holder_name: formData.accountHolderName,
-        account_holder_type: formData.accountType,
-        routing_number: formData.routingNumber,
-        account_number: formData.accountNumber,
+    const cardElement = elements.getElement(CardElement);
+    const { error, paymentMethod } = await stripe.createPaymentMethod({
+      type: "card",
+      card: cardElement,
+      billing_details: {
+        name: cardholderName,
+        email,
+        address: { line1: billingAddress },
       },
     });
 
-    if (bankToken.error) {
-      alert(`Error: ${bankToken.error.message}`);
+    if (error) {
+      console.error("Error:", error);
     } else {
-      try {
-        await axios.post("http://localhost:3000/addBankInfo", {
-          userId: user.id,
-          bankTokenId: bankToken.token.id,
-        });
-        alert("Bank info added successfully!");
-        navigate("/dashboard");
-      } catch (error) {
-        console.error("Error submitting bank info:", error.response.data);
-        alert("Failed to add bank info");
-      }
+      handlePaymentSubmission(paymentMethod.id);
+    }
+  };
+
+  
+
+
+  const updateRequest = async () => {
+    const response = await fetch(`http://localhost:3000/updateRequest/${requestId}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status: "Paid" }), // Convert dollars to cents
+    });
+    const jsonResponse = await response.json();
+    if (jsonResponse.success) {
+      navigate(`/download-image`, { state: { imageUrl: afterImage } }); // Navigate with the image URL for download
+    } else {
+      console.error("Payment failed:", jsonResponse.message);
+    }
+  };
+
+
+  const handlePaymentSubmission = async (paymentMethodId) => {
+    const response = await fetch("http://localhost:3000/process_payment", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ paymentMethodId, total: amount * 100 }), // Convert dollars to cents
+    });
+    updateRequest();
+    const jsonResponse = await response.json();
+    if (jsonResponse.success) {
+      navigate(`/download-image`, { state: { imageUrl: afterImage } }); // Navigate with the image URL for download
+    } else {
+      console.error("Payment failed:", jsonResponse.message);
     }
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <div
-        className="flex items-center justify-between cursor-pointer border-b border-gray-200 pb-2 mb-4"
-        onClick={toggleVisibility}
-      >
-        <h2 className="text-xl font-semibold">Bank Information</h2>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className={`h-6 w-6 transform transition-transform duration-200 ${
-            !isVisible ? "rotate-180" : ""
-          }`}
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
+    <div className="flex flex-wrap md:flex-nowrap justify-center gap-4 my-10 mx-auto p-5">
+      <div className="order-summary w-auto p-4 border rounded-lg shadow-md bg-white">
+        <h3 className="text-lg font-semibold text-gray-700 mb-4">
+          Order Summary
+        </h3>
+        <Watermark
+          content="FamSnap ©"
+          rotate={20}
+          gapX={5}
+          width={100}
+          gapY={80}
+          height={5}
+          fontSize={12}
+          fontColor="rgb(255 255 255 / 25%)"
+          style={{ background: "#fff" }}
         >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M19 9l-7 7-7-7"
+          <img
+            src={afterImage}
+            alt="Enhanced Image"
+            className="max-h-96 w-auto mb-4 rounded-md shadow"
           />
-        </svg>
+          <div className="absolute inset-0 bg-transparent z-10"></div>
+        </Watermark>
+
+        {/* <p className="text-gray-600">{orderSummary}</p> */}
       </div>
-      {!isVisible && (
-        <div className="mt-4 space-y-4">
-          <form
-            onSubmit={handleSubmit}
-            className="mt-8 bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 space-y-6"
-          >
-            <h1 className="text-2xl font-bold text-center mb-6">
-              Add Bank Information
-            </h1>
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              <input
-                type="text"
-                name="bankName"
-                value={formData.bankName}
-                onChange={handleChange}
-                placeholder="Bank Name"
-                required
-                className="input border"
-              />
-              <input
-                type="text"
-                name="accountHolderName"
-                value={formData.accountHolderName}
-                onChange={handleChange}
-                placeholder="Account Holder's Name"
-                required
-                className="input border"
-              />
-              <input
-                type="text"
-                name="accountNumber"
-                value={formData.accountNumber}
-                onChange={handleChange}
-                placeholder="Account Number"
-                required
-                className="input border rounded"
-              />
-              <input
-                type="text"
-                name="routingNumber"
-                value={formData.routingNumber}
-                onChange={handleChange}
-                placeholder="Routing Number"
-                required
-                className="input border"
-              />
-              <select
-                name="accountType"
-                value={formData.accountType}
-                onChange={handleChange}
-                required
-                className="select border"
-              >
-                <option value="">Select Account Type</option>
-                <option value="checking">Checking</option>
-                <option value="savings">Savings</option>
-              </select>
-            </div>
-            <div>
-              <label className="block mb-2">Card Number</label>
-              <CardNumberElement className="input border p-2" />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block mb-2">Expiration Date</label>
-                <CardExpiryElement className="input border p-2" />
-              </div>
-              <div>
-                <label className="block mb-2">CVV</label>
-                <CardCvcElement className="input border p-2" />
-              </div>
-            </div>
-            <button
-              type="submit"
-              disabled={!stripe}
-              className="btn w-full bg-blue-500 text-white border border-blue-500 hover:bg-blue-700"
+      <div className="payment-form w-full md:w-1/2 max-w-md p-5 border rounded-lg shadow-md bg-white">
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <h2 className="text-xl font-semibold text-gray-700">
+            Complete Your Payment
+          </h2>
+
+          <input
+            type="text"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Email Address"
+            className="w-full p-2 border border-gray-300 rounded-md"
+          />
+
+          <input
+            type="text"
+            value={cardholderName}
+            onChange={(e) => setCardholderName(e.target.value)}
+            placeholder="Cardholder Name"
+            className="w-full p-2 border border-gray-300 rounded-md"
+          />
+
+          <input
+            type="text"
+            value={billingAddress}
+            onChange={(e) => setBillingAddress(e.target.value)}
+            placeholder="Billing Address"
+            className="w-full p-2 border border-gray-300 rounded-md"
+          />
+
+          <div className="form-group">
+            <label
+              htmlFor="card-element"
+              className="block text-sm font-medium text-gray-700"
             >
-              Submit Bank Info
-            </button>
-          </form>
-        </div>
-      )}
+              Credit or Debit Card
+            </label>
+            <div
+              id="card-element"
+              className="mt-1 p-3 border border-gray-300 rounded-md shadow-sm"
+            >
+              <CardElement
+                className="w-full"
+                options={{
+                  style: {
+                    base: {
+                      fontSize: "16px",
+                      color: "#424770",
+                      "::placeholder": {
+                        color: "#aab7c4",
+                      },
+                    },
+                    invalid: {
+                      color: "#9e2146",
+                    },
+                  },
+                }}
+              />
+            </div>
+          </div>
+
+          <div className="flex justify-between items-center mt-4">
+            <label
+              htmlFor="total"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Total:
+            </label>
+            <span className="text-sm font-medium text-gray-900">
+              ${amount || "1.99"}
+            </span>
+          </div>
+
+          <button
+            type="submit"
+            disabled={!stripe}
+            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          >
+            Pay ${amount}
+          </button>
+        </form>
+      </div>
     </div>
   );
 };
 
-export default AddBankInfo;
+export default PaymentForm;

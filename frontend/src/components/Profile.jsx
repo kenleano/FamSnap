@@ -65,7 +65,7 @@ const ProfileEdit = () => {
             firstName: formData.firstName,
             lastName: formData.lastName,
             email: formData.email,
-            password: formData.password, // Make sure your backend handles password hashing
+            // password: formData.password, // Make sure your backend handles password hashing
             birthday: formData.birthday,
           }),
         }
@@ -156,7 +156,7 @@ const ProfileEdit = () => {
           className="mt-1 p-2 border border-gray-300 rounded-md focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
         />
       </div>
-      <div className="flex flex-col">
+      {/* <div className="flex flex-col">
         <label className="text-gray-700 font-medium">Password</label>
         <input
           type="password"
@@ -166,7 +166,7 @@ const ProfileEdit = () => {
           placeholder="New Password"
           className="mt-1 p-2 border border-gray-300 rounded-md focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
         />
-      </div>
+      </div> */}
       <div className="flex flex-col">
         <label className="text-gray-700 font-medium">Birthday</label>
         <input

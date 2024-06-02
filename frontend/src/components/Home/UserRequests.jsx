@@ -193,7 +193,7 @@ const UserRequests = () => {
                 <>
                   <button
                     onClick={() => {
-                      const subject = "Regarding Your Service";
+                      const subject = request.serviceName + " Service Inquiry";
                       const body = "Hello, I would like to discuss further details about the service.";
                       const mailtoLink = `mailto:${artistEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
                       window.open(mailtoLink);
