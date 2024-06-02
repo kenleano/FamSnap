@@ -86,26 +86,26 @@ const NavBarLanding = () => {
                           Colorize
                         </Link>
                       </li>
-                      <li>
+                      {/* <li>
                         <Link
                           to="/restoration/professional-artist"
                           className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                         >
                           Professional Artist
                         </Link>
-                      </li>
+                      </li> */}
                     </ul>
                   </div>
                 )}
               </li>
-              <li>
+              {/* <li>
                 <CustomLink
                   to="/userrequests"
                   className="text-gray-800 hover:text-blue-700"
                 >
                   Requests
                 </CustomLink>
-              </li>
+              </li> */}
               <li>
                 <CustomLink
                   to="/profile"

@@ -215,7 +215,7 @@ const Register = () => {
           >
             Register Family
           </button>
-          <p className="text-center text-sm text-gray-600 mt-4">
+          {/* <p className="text-center text-sm text-gray-600 mt-4">
             Are you an artist?{" "}
             <Link
               to="/artist-registration"
@@ -223,7 +223,7 @@ const Register = () => {
             >
               Register here
             </Link>
-          </p>
+          </p> */}
         </form>
       </div>
     </div>

@@ -14,12 +14,8 @@ import { v2 as cloudinary } from "cloudinary";
 import Request from "./models/requests.js";
 import Node from "./models/node.js";
 import Stripe from 'stripe';
-
-// This should be at the very top of your main file
-
 import Replicate from "replicate";
 import fs from "fs";
-// const { json } = require('body-parser');
 const { parsed: config } = dotenv.config();
 
 cloudinary.config({
@@ -28,12 +24,8 @@ cloudinary.config({
   api_secret: process.env.API_SECRET,
 });
 
-// console.log(cloudinary);
-// console.log(cloudinary.v2.uploader);
-
 const PORT = 3000;
-const mongoDBURL =
-  "mongodb+srv://admin:1234@famsnap.iaojsaa.mongodb.net/FamSnap?retryWrites=true&w=majority";
+
 // Just for testing purpose
 cloudinary.uploader.add_tag(
   "example_tag",
@@ -52,7 +44,7 @@ app.listen(PORT, () => {
 
 // Connect to MongoDB
 mongoose
-  .connect(mongoDBURL)
+  .connect(process.env.mongoDBURL)
   .then(() => console.log("MongoDB connected successfully"))
   .catch((err) => console.error("MongoDB connection error:", err));
 
@@ -1005,9 +997,6 @@ app.post('/writetree', async (req, res) => {
   }
 });
 
-
-
-
 app.post('/writeToFile', (req, res) => {
   const newData = req.body;
   let familyTreeData = [];
@@ -1026,7 +1015,6 @@ app.post('/writeToFile', (req, res) => {
 });
 
 
-
 // Endpoint to delete content from db.json
 app.delete('/deleteFileContent', (req, res) => {
   let familyTreeData = "";
@@ -1040,35 +1028,6 @@ app.delete('/deleteFileContent', (req, res) => {
 });
 
 
-app.post("/updateFamilyTree/:userId", async (req, res) => {
-  const userId = req.params.userId;
-
-  fs.readFile('db.json', 'utf8', async (err, data) => {
-    if (err) {
-      console.error('Error reading from file:', err);
-      return res.status(500).json({ message: 'Error reading from file' });
-    }
-  
-    try {
-      // Assuming db.json contains an array of family tree data
-      let newFamilyTree = JSON.parse(data);
-  
-      // Find the node for the specified userId and update it
-      const node = await Node.findOne({ userId: userId });
-      if (!node) {
-        return res.status(404).json({ message: "User not found" });
-      }
-  
-      // Update the node with new family tree data
-      node.familyTree = newFamilyTree;  // Set the new family tree without the extra nesting
-      await node.save();  // Save the updated node
-  
-    } catch (updateError) {
-      console.error('Error updating the family tree:', updateError);
-      res.status(500).json({ message: updateError.message });
-    }
-  });
-});
 
 
 app.get("/jsontree", (req, res) => {
@@ -1109,6 +1068,38 @@ app.post("/jsontree", (req, res) => {
           res.json(nodes); // Send the updated nodes data as JSON
         }
       });
+    }
+  });
+});
+
+
+
+app.post("/updateFamilyTree/:userId", async (req, res) => {
+  const userId = req.params.userId;
+
+  fs.readFile('db.json', 'utf8', async (err, data) => {
+    if (err) {
+      console.error('Error reading from file:', err);
+      return res.status(500).json({ message: 'Error reading from file' });
+    }
+  
+    try {
+      // Assuming db.json contains an array of family tree data
+      let newFamilyTree = JSON.parse(data);
+  
+      // Find the node for the specified userId and update it
+      const node = await Node.findOne({ userId: userId });
+      if (!node) {
+        return res.status(404).json({ message: "User not found" });
+      }
+  
+      // Update the node with new family tree data
+      node.familyTree = newFamilyTree;  // Set the new family tree without the extra nesting
+      await node.save();  // Save the updated node
+  
+    } catch (updateError) {
+      console.error('Error updating the family tree:', updateError);
+      res.status(500).json({ message: updateError.message });
     }
   });
 });

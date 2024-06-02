@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../AuthContext";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -36,12 +36,12 @@ const Login = () => {
     }
   };
 
-  
-  
   const writeToFile = async (userId) => {
     try {
-      const response = await fetch("http://localhost:3000/familytree/" + userId);
-     
+      const response = await fetch(
+        "http://localhost:3000/familytree/" + userId
+      );
+
       if (!response.ok) {
         throw new Error("Failed to fetch family tree data");
       }
@@ -64,8 +64,16 @@ const Login = () => {
   return (
     <div className="min-h-screen flex flex-col items-center px-16 py-8 bg-gray-100">
       <h1 className="text-2xl font-bold mb-4">Login</h1>
-      <form onSubmit={handleSubmit} className="bg-white shadow-md rounded-lg px-8 py-6 w-80">
-      <label htmlFor="password" className="block text-gray-700 text-sm font-bold mb-2">Email</label>
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white shadow-md rounded-lg px-8 py-6 w-80"
+      >
+        <label
+          htmlFor="password"
+          className="block text-gray-700 text-sm font-bold mb-2"
+        >
+          Email
+        </label>
         <div className="mb-4">
           <input
             type="text"
@@ -76,7 +84,12 @@ const Login = () => {
           />
         </div>
         <div className="mb-4">
-        <label htmlFor="password" className="block text-gray-700 text-sm font-bold mb-2">Password</label>
+          <label
+            htmlFor="password"
+            className="block text-gray-700 text-sm font-bold mb-2"
+          >
+            Password
+          </label>
           <input
             type="password"
             placeholder="Password"
@@ -91,7 +104,12 @@ const Login = () => {
         >
           Login
         </button>
-        <p className="mt-2 text-sm">Are you an artist? <Link to="/artist-login" className="text-blue-700">Login here</Link></p>
+        {/* <p className="mt-2 text-sm">
+          Are you an artist?{" "}
+          <Link to="/artist-login" className="text-blue-700">
+            Login here
+          </Link>
+        </p> */}
       </form>
     </div>
   );
