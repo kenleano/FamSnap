@@ -3,7 +3,7 @@ import { Link, useMatch, useResolvedPath } from "react-router-dom";
 
 const PhotosNav = () => {
   return (
-    <nav className="bg-blue-500 shadow-md flex items-center justify-between px-5 py-3 rounded-full">
+    <nav className="bg-green-500 shadow-md flex items-center justify-between px-5 py-3 rounded-full">
       <NavItem to="/photos">All Photos</NavItem>
       <NavItem to="/photos/people">People</NavItem>
       <NavItem to="/photos/albums">Albums</NavItem>
@@ -18,8 +18,8 @@ const NavItem = ({ to, children }) => {
   return (
     <Link
       to={to}
-      className={`text-white hover:text-blue-200 hover:bg-blue-600 py-1 px-3 transition duration-300 ease-in-out rounded-full ${
-        isActive ? "bg-blue-700" : ""
+      className={`text-white hover:text-green-200 hover:bg-green-600 py-1 px-3 transition duration-300 ease-in-out rounded-full ${
+        isActive ? "bg-green-700" : ""
       }`}
     >
       {children}

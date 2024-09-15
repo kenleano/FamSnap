@@ -67,7 +67,7 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen w-full bg-blue-50 px-16 py-8">
+    <div className="min-h-screen w-full bg-green-50 px-16 py-8">
       <div className="max-w-lg mx-auto mt-10 space-y-8  bg-white p-6 rounded-lg shadow-lg">
         <h1 className="text-2xl font-bold text-center text-gray-900">
           Family Registration
@@ -84,7 +84,7 @@ const Register = () => {
                 placeholder="First Name"
                 value={childDetails.firstName}
                 onChange={(e) => handleChange(e, setChildDetails)}
-                className="w-full p-4 text-gray-700 bg-white border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-300 ease-in-out"
+                className="w-full p-4 text-gray-700 bg-white border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 transition duration-300 ease-in-out"
                 required
               />
               <input
@@ -93,7 +93,7 @@ const Register = () => {
                 placeholder="Last Name"
                 value={childDetails.lastName}
                 onChange={(e) => handleChange(e, setChildDetails)}
-                className="w-full p-4 text-gray-700 bg-white border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-300 ease-in-out"
+                className="w-full p-4 text-gray-700 bg-white border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 transition duration-300 ease-in-out"
                 required
               />
               <input
@@ -102,7 +102,7 @@ const Register = () => {
                 placeholder="Email"
                 value={childDetails.email}
                 onChange={(e) => handleChange(e, setChildDetails)}
-                className="w-full p-4 text-gray-700 bg-white border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-300 ease-in-out"
+                className="w-full p-4 text-gray-700 bg-white border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 transition duration-300 ease-in-out"
               />
               <input
                 type="password"
@@ -110,14 +110,14 @@ const Register = () => {
                 placeholder="Password"
                 value={childDetails.password}
                 onChange={(e) => handleChange(e, setChildDetails)}
-                className="w-full p-4 text-gray-700 bg-white border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-300 ease-in-out"
+                className="w-full p-4 text-gray-700 bg-white border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 transition duration-300 ease-in-out"
               />
               <input
                 type="date"
                 name="birthday"
                 value={childDetails.birthday}
                 onChange={(e) => handleChange(e, setChildDetails)}
-                className="w-full p-4 text-gray-700 bg-white border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-300 ease-in-out"
+                className="w-full p-4 text-gray-700 bg-white border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 transition duration-300 ease-in-out"
               />
               <label className="inline-flex items-center mr-6">
                 <input
@@ -126,7 +126,7 @@ const Register = () => {
                   value="male"
                   checked={childDetails.gender === "male"}
                   onChange={(e) => handleChange(e, setChildDetails)}
-                  className="form-radio h-5 w-5 text-blue-600"
+                  className="form-radio h-5 w-5 text-green-600"
                 />
                 <span className="ml-2 text-gray-700">Male</span>
               </label>
@@ -154,7 +154,7 @@ const Register = () => {
                 placeholder="First Name"
                 value={motherDetails.firstName}
                 onChange={(e) => handleChange(e, setMotherDetails)}
-                className="w-full p-4 text-gray-700 bg-white border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-300 ease-in-out"
+                className="w-full p-4 text-gray-700 bg-white border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 transition duration-300 ease-in-out"
                 required
               />
               <input
@@ -163,7 +163,7 @@ const Register = () => {
                 placeholder="Last Name"
                 value={motherDetails.lastName}
                 onChange={(e) => handleChange(e, setMotherDetails)}
-                className="w-full p-4 text-gray-700 bg-white border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-300 ease-in-out"
+                className="w-full p-4 text-gray-700 bg-white border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 transition duration-300 ease-in-out"
                 required
               />
               <input
@@ -172,7 +172,7 @@ const Register = () => {
                 placeholder="Birthday"
                 value={motherDetails.birthday}
                 onChange={(e) => handleChange(e, setMotherDetails)}
-                className="w-full p-4 text-gray-700 bg-white border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-300 ease-in-out"
+                className="w-full p-4 text-gray-700 bg-white border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 transition duration-300 ease-in-out"
               />
             </div>
           </div>
@@ -187,7 +187,7 @@ const Register = () => {
                 placeholder="First Name"
                 value={fatherDetails.firstName}
                 onChange={(e) => handleChange(e, setFatherDetails)}
-                className="w-full p-4 text-gray-700 bg-white border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-300 ease-in-out"
+                className="w-full p-4 text-gray-700 bg-white border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 transition duration-300 ease-in-out"
                 required
               />
               <input
@@ -196,7 +196,7 @@ const Register = () => {
                 placeholder="Last Name"
                 value={fatherDetails.lastName}
                 onChange={(e) => handleChange(e, setFatherDetails)}
-                className="w-full p-4 text-gray-700 bg-white border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-300 ease-in-out"
+                className="w-full p-4 text-gray-700 bg-white border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 transition duration-300 ease-in-out"
                 required
               />
               <input
@@ -205,13 +205,13 @@ const Register = () => {
                 placeholder="Birthday"
                 value={fatherDetails.birthday}
                 onChange={(e) => handleChange(e, setFatherDetails)}
-                className="w-full p-4 text-gray-700 bg-white border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-300 ease-in-out"
+                className="w-full p-4 text-gray-700 bg-white border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 transition duration-300 ease-in-out"
               />
             </div>
           </div>
           <button
             type="submit"
-            className="w-full p-4 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
+            className="w-full p-4 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
           >
             Register Family
           </button>
@@ -219,7 +219,7 @@ const Register = () => {
             Are you an artist?{" "}
             <Link
               to="/artist-registration"
-              className="text-blue-500 hover:text-blue-600"
+              className="text-green-500 hover:text-green-600"
             >
               Register here
             </Link>

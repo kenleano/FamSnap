@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import { useAuth } from "../AuthContext";
-import axios from 'axios';
-
+import axios from "axios";
 
 const FamilyTreeComponent = () => {
   const [data, setData] = useState([]);
@@ -12,13 +11,13 @@ const FamilyTreeComponent = () => {
   useEffect(() => {
     // Fetching the family tree data from the server
     console.log("Fetching family tree data from the server...");
-    fetch('http://localhost:3000/jsontree')
-      .then(response => response.json())
-      .then(data => {
+    fetch("http://localhost:3000/jsontree")
+      .then((response) => response.json())
+      .then((data) => {
         console.log("Received data:", data);
         setData(data);
       })
-      .catch(error => {
+      .catch((error) => {
         console.error("Error fetching data:", error);
       });
   }, []); // This runs once on mount
@@ -35,39 +34,37 @@ const FamilyTreeComponent = () => {
 
       family.onUpdateNode((args) => {
         console.log("Updating node:", args);
-        fetch('http://localhost:3000/jsontree', {
-          method: 'POST',
+        fetch("http://localhost:3000/jsontree", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json'
+            "Content-Type": "application/json",
           },
-          body: JSON.stringify(args)
+          body: JSON.stringify(args),
         })
-        .then(response => response.json())
-        .then(updatedData => {
-          console.log("Updated data received:", updatedData);
-     
-        })
-        .catch(error => {
-          console.error("Error updating node:", error);
-        });
+          .then((response) => response.json())
+          .then((updatedData) => {
+            console.log("Updated data received:", updatedData);
+          })
+          .catch((error) => {
+            console.error("Error updating node:", error);
+          });
         window.location.reload();
-     
       });
 
       family.load(data);
       //updateFamilyTree(userId)
- 
     }
-  }, [data]); 
-
+  }, [data]);
 
   useEffect(() => {
     const updateFamilyTree = async () => {
       try {
-        const response = await axios.post(`http://localhost:3000/updateFamilyTree/${userId}`);
-        console.log('Family tree updated successfully:', response.data);
+        const response = await axios.post(
+          `http://localhost:3000/updateFamilyTree/${userId}`
+        );
+        console.log("Family tree updated successfully:", response.data);
       } catch (error) {
-        console.error('Error updating family tree:', error);
+        console.error("Error updating family tree:", error);
       }
     };
 

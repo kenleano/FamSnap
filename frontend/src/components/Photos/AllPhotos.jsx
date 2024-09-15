@@ -186,11 +186,11 @@ const AllPhotos = () => {
           onChange={(event) => setSearchValue(event.target.value)}
           required
           placeholder="Enter a search value..."
-          className="form-input px-4 py-2 rounded-md border border-gray-300 w-full focus:ring-blue-500 focus:border-blue-500"
+          className="form-input px-4 py-2 rounded-md border border-gray-300 w-full focus:ring-green-500 focus:border-green-500"
         />
         <button
           type="submit"
-          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
         >
           Search
         </button>
@@ -255,12 +255,12 @@ const AllPhotos = () => {
                         {editableTags.map((tag, index) => (
                           <span
                             key={index}
-                            className="flex items-center gap-1 bg-blue-100 text-blue-700 px-2 py-1 rounded-full text-sm"
+                            className="flex items-center gap-1 bg-green-100 text-green-700 px-2 py-1 rounded-full text-sm"
                           >
                             {tag}
                             <button
                               onClick={() => removeTag(index)}
-                              className="text-blue-500 text-sm"
+                              className="text-green-500 text-sm"
                             >
                               &times;
                             </button>
@@ -288,7 +288,7 @@ const AllPhotos = () => {
               <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
                 <button
                   onClick={saveTags}
-                  className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm"
+                  className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-600 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:ml-3 sm:w-auto sm:text-sm"
                 >
                   Save Tags
                 </button>

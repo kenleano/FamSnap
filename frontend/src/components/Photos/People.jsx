@@ -36,26 +36,26 @@ const People = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="grid justify-center content-center gap-5 grid-flow-col">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {loading ? (
-          <div className="text-center">Loading...</div>
+          <div className="col-span-full text-center text-gray-500">Loading...</div>
         ) : error ? (
-          <div className="text-center text-red-500">{error}</div>
+          <div className="col-span-full text-center text-red-500">{error}</div>
         ) : (
           familyMembers.map((family) => (
             <div
-            key={family.id}
-            onClick={() => handleClick(family.name)}
-            className="flex flex-col justify-between p-4 bg-white rounded border border-gray-300 hover:shadow-lg transition duration-150 ease-in-out cursor-pointer"
-          >
-              <div className="overflow-hidden rounded">
+              key={family.id}
+              onClick={() => handleClick(family.name)}
+              className="flex flex-col justify-between p-4 bg-white rounded-lg border border-gray-300 shadow-sm hover:shadow-md transition-shadow duration-150 ease-in-out cursor-pointer"
+            >
+              <div className="overflow-hidden rounded-lg">
                 <img
                   src={family.firstImageUrl || 'https://t3.ftcdn.net/jpg/01/18/01/98/360_F_118019822_6CKXP6rXmVhDOzbXZlLqEM2ya4HhYzSV.jpg'}
                   alt={`Cover of ${family.name}`}
-                  className="w-full h-48 object-cover rounded"
+                  className="w-full h-48 object-cover rounded-lg"
                 />
               </div>
-              <div className="text-center mt-2">{family.name}</div>
+              <div className="text-center mt-2 text-lg font-semibold">{family.name}</div>
             </div>
           ))
         )}

@@ -94,7 +94,8 @@ function ColorizeImage({ setImageUrl, imageUrl }) {
     <div className="flex justify-center py-5 overflow-x-hidden">
       <div className="max-w-4xl min-w-[300px] mx-auto">
         <div className="flex justify-center my-4">
-          <ImageUpload setImageUrl={setImageUrl} />
+        {!isSubmitting && <ImageUpload setImageUrl={setImageUrl} />}
+
         </div>
         {isSubmitting && (
           <div className="flex justify-center">

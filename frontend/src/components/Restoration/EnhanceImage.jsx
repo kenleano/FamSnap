@@ -127,7 +127,7 @@ function EnhanceImage({ setImageUrl, imageUrl }) {
             <form onSubmit={handleSubmit} className="text-center mb-8">
               <button
                 type="submit"
-                className="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700 transition duration-300 ease-in-out"
+                className="bg-green-500 text-white font-bold py-2 px-4 rounded hover:bg-green-700 transition duration-300 ease-in-out"
               >
                 Enhance Image
               </button>
@@ -151,13 +151,13 @@ function EnhanceImage({ setImageUrl, imageUrl }) {
                   <button
                     type="button"
                     onClick={handlePurchaseClick}
-                    className="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700 transition duration-300 ease-in-out"
+                    className="bg-green-500 text-white font-bold py-2 px-4 rounded hover:bg-green-700 transition duration-300 ease-in-out"
                   >
                     Purchase for $1.99!
                   </button>
                 </div>
               )}
-              {/* <a href={restoredImages} target="_blank" className="bg-blue-500 text-white font-bold">Test</a> */}
+              {/* <a href={restoredImages} target="_blank" className="bg-green-500 text-white font-bold">Test</a> */}
               <ReactCompareSlider
                 itemOne={
                   <ReactCompareSliderImage

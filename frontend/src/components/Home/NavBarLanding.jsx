@@ -20,14 +20,12 @@ const NavBarLanding = () => {
         <Link to="/" className="flex items-center">
           <svg
             viewBox="0 0 248 31"
-            className="h-6 w-auto hover:text-blue-700 duration-200"
+            className="h-6 w-auto hover:text-green-700 duration-200"
           >
             {/* SVG path */}
           </svg>
-          <img src="https://cdn-icons-png.freepik.com/512/1504/1504357.png" alt="FamSnap" className="h-6 w-auto hover:text-blue-400 duration-200" />
-          <span className="ml-2 text-xl font-bold  text-blue-500 hover:text-blue-700">
-            FamSnap
-          </span>
+          <img src="/famsnaplogo.svg" alt="FamSnap" className="h-6 w-auto hover:text-green-400 duration-200" />
+         
         </Link>
       </div>
 
@@ -40,7 +38,7 @@ const NavBarLanding = () => {
               <li>
                 <CustomLink
                   to="/familytree"
-                  className="text-gray-800 hover:text-blue-700"
+                  className="text-gray-800 hover:text-green-700"
                 >
                   Family Tree
                 </CustomLink>
@@ -48,7 +46,7 @@ const NavBarLanding = () => {
               <li>
                 <CustomLink
                   to="/photos"
-                  className="text-gray-800 hover:text-blue-700"
+                  className="text-gray-800 hover:text-green-700"
                 >
                   Photos
                 </CustomLink>
@@ -59,7 +57,7 @@ const NavBarLanding = () => {
                 className="relative"
               >
                 <DropLink
-                  className="text-gray-800 hover:text-blue-700"
+                  className="text-gray-800 hover:text-green-700"
                   id="dropdownHoverButton"
                   data-dropdown-toggle="dropdownHover"
                   data-dropdown-trigger="hover"
@@ -101,7 +99,7 @@ const NavBarLanding = () => {
               {/* <li>
                 <CustomLink
                   to="/userrequests"
-                  className="text-gray-800 hover:text-blue-700"
+                  className="text-gray-800 hover:text-green-700"
                 >
                   Requests
                 </CustomLink>
@@ -109,7 +107,7 @@ const NavBarLanding = () => {
               <li>
                 <CustomLink
                   to="/profile"
-                  className="text-gray-800 hover:text-blue-700"
+                  className="text-gray-800 hover:text-green-700"
                 >
                   Profile
                 </CustomLink>
@@ -121,13 +119,13 @@ const NavBarLanding = () => {
                
               <CustomLink
                 to="/requests"
-                className="text-gray-800 hover:text-blue-700"
+                className="text-gray-800 hover:text-green-700"
               >
                 Requests
               </CustomLink>
               <CustomLink
                 to="/artist-dashboard"
-                className="text-gray-800 hover:text-blue-700"
+                className="text-gray-800 hover:text-green-700"
               >
                 Dashboard
               </CustomLink>
@@ -138,13 +136,13 @@ const NavBarLanding = () => {
            {/* logged out  */}
            <CustomLink
                 to="/login"
-                className="text-gray-800 hover:text-blue-700"
+                className="text-gray-800 hover:text-green-700"
               >
                 Login
               </CustomLink>
               <CustomLink
                 to="/register"
-                className="text-gray-800 hover:text-blue-700"
+                className="text-gray-800 hover:text-green-700"
               >
                 Register
               </CustomLink>
@@ -168,8 +166,8 @@ function CustomLink({ to, children, ...props }) {
       {...props}
       className={`p-4 ${
         isActive
-          ? "border-b-2 border-blue-700 text-blue-700"
-          : "text-gray-800 hover:text-blue-700"
+          ? "border-b-2 border-green-700 text-green-700"
+          : "text-gray-800 hover:text-green-700"
       }`}
     >
       {children}
@@ -185,8 +183,8 @@ function DropLink({ to, children, ...props }) {
       {...props}
       className={`p-4 ${
         isActive
-          ? "text-gray-800 hover:text-blue-700"
-          : "border-b-2 border-blue-700 text-blue-700"
+          ? "text-gray-800 hover:text-green-700"
+          : "border-b-2 border-green-700 text-green-700"
       }`}
     >
       {children}

@@ -33,7 +33,7 @@ const ImageUpload = ({ setImageUrl }) => {
     <div>
       <button
         onClick={openUploadWidget}
-        className="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700 transition duration-300 ease-in-out"
+        className="bg-green-500 text-white font-bold py-2 px-4 rounded hover:bg-green-700 transition duration-300 ease-in-out"
       >
         Upload Image
       </button>

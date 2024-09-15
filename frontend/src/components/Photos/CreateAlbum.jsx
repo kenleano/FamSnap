@@ -43,7 +43,7 @@ const CreateAlbum = () => {
 
   return (
     <>
-      <button className="create-album-btn bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+      <button className="create-album-btn bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
               onClick={() => setShowModal(true)}>
         Create New Album
       </button>
@@ -65,7 +65,7 @@ const CreateAlbum = () => {
                 {success && <p className="text-green-500 text-xs italic">Album created successfully!</p>}
               </div>
               <div className="items-center px-4 py-3">
-                <button className="create-btn bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                <button className="create-btn bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
                         onClick={handleCreateAlbum} disabled={isSubmitting}>
                   Create Album
                 </button>

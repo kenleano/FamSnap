@@ -80,7 +80,7 @@ const Login = () => {
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-500"
           />
         </div>
         <div className="mb-4">
@@ -95,18 +95,18 @@ const Login = () => {
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-500"
           />
         </div>
         <button
           type="submit"
-          className="w-full p-2 bg-blue-700 text-white rounded hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full p-2 bg-green-700 text-white rounded hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-green-500"
         >
           Login
         </button>
         {/* <p className="mt-2 text-sm">
           Are you an artist?{" "}
-          <Link to="/artist-login" className="text-blue-700">
+          <Link to="/artist-login" className="text-green-700">
             Login here
           </Link>
         </p> */}

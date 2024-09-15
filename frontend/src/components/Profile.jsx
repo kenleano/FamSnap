@@ -109,7 +109,7 @@ const ProfileEdit = () => {
     }
   };
   return (
-    <div className="min-h-screen w-full bg-blue-50 px-16 py-8">
+    <div className="min-h-screen w-full bg-green-50 px-16 py-8">
     <form
       onSubmit={handleSubmit}
       className="max-w-lg mx-auto my-8 space-y-4 bg-white p-6 rounded-md shadow"
@@ -133,7 +133,7 @@ const ProfileEdit = () => {
           name="firstName"
           value={formData.firstName}
           onChange={handleChange}
-          className="mt-1 p-2 border border-gray-300 rounded-md focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+          className="mt-1 p-2 border border-gray-300 rounded-md focus:border-green-500 focus:ring focus:ring-green-500 focus:ring-opacity-50"
         />
       </div>
       <div className="flex flex-col">
@@ -143,7 +143,7 @@ const ProfileEdit = () => {
           name="lastName"
           value={formData.lastName}
           onChange={handleChange}
-          className="mt-1 p-2 border border-gray-300 rounded-md focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+          className="mt-1 p-2 border border-gray-300 rounded-md focus:border-green-500 focus:ring focus:ring-green-500 focus:ring-opacity-50"
         />
       </div>
       <div className="flex flex-col">
@@ -153,7 +153,7 @@ const ProfileEdit = () => {
           name="email"
           value={formData.email}
           onChange={handleChange}
-          className="mt-1 p-2 border border-gray-300 rounded-md focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+          className="mt-1 p-2 border border-gray-300 rounded-md focus:border-green-500 focus:ring focus:ring-green-500 focus:ring-opacity-50"
         />
       </div>
       {/* <div className="flex flex-col">
@@ -164,7 +164,7 @@ const ProfileEdit = () => {
           value={formData.password}
           onChange={handleChange}
           placeholder="New Password"
-          className="mt-1 p-2 border border-gray-300 rounded-md focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+          className="mt-1 p-2 border border-gray-300 rounded-md focus:border-green-500 focus:ring focus:ring-green-500 focus:ring-opacity-50"
         />
       </div> */}
       <div className="flex flex-col">
@@ -174,12 +174,12 @@ const ProfileEdit = () => {
           name="birthday"
           value={formData.birthday}
           onChange={handleChange}
-          className="mt-1 p-2 border border-gray-300 rounded-md focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+          className="mt-1 p-2 border border-gray-300 rounded-md focus:border-green-500 focus:ring focus:ring-green-500 focus:ring-opacity-50"
         />
       </div>
       <button
         type="submit"
-        className="w-full p-3 mt-4 bg-blue-700 text-white rounded-md hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300"
+        className="w-full p-3 mt-4 bg-green-700 text-white rounded-md hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300"
       >
         Update Profile
       </button>

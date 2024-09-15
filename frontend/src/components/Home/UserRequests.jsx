@@ -173,7 +173,7 @@ const UserRequests = () => {
                       download="BeforeImage.jpg"
                       className="inline-block mt-2"
                     >
-                      <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out">
+                      <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out">
                         Download Image
                       </button>
                     </a>
